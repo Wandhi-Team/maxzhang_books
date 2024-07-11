@@ -1,0 +1,919 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="utf-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1"><title>PVE7.0-DIY | 耕田日记</title><noscript>开启JavaScript才能访问本站哦~</noscript><link rel="icon" href="/img/pwa/favicon.ico"><!-- index.css--><link rel="stylesheet" href="/css/index.css?v=1.12.3"><!-- inject head--><link rel="canonical" href="http://blog.wandhi.com/pages/9e2c2c/"><link rel="stylesheet" href="https://cdn2.codesign.qq.com/icons/7pOrz0WXB5ZWJPX/latest/iconfont.css"><!-- aplayer--><!-- swiper--><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Swiper/11.0.5/swiper-bundle.min.css"><!-- fancybox ui--><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancyapps-ui/5.0.36/fancybox/fancybox.min.css"><!-- katex--><!-- Open Graph--><meta name="description" content="原文 https:&#x2F;&#x2F;github.com&#x2F;xiangfeidexiaohuo&#x2F;ProxmoxVE-7.0-DIY  Proxmox VE 7.x 相关教程 包括但不限于换源、直通、界面显示温度&#x2F;频率等。   Proxmox VE 7.x 换源 必须保证pve系统能联网，没联网，没法换源。   点击展开，查看详细教程！  SSH登录到pve后台，然后一条一条的执行命令1.处理掉企业源r">
+<meta property="og:type" content="article">
+<meta property="og:title" content="PVE7.0-DIY">
+<meta property="og:url" content="http://blog.wandhi.com/pages/9e2c2c/index.html">
+<meta property="og:site_name" content="耕田日记">
+<meta property="og:description" content="原文 https:&#x2F;&#x2F;github.com&#x2F;xiangfeidexiaohuo&#x2F;ProxmoxVE-7.0-DIY  Proxmox VE 7.x 相关教程 包括但不限于换源、直通、界面显示温度&#x2F;频率等。   Proxmox VE 7.x 换源 必须保证pve系统能联网，没联网，没法换源。   点击展开，查看详细教程！  SSH登录到pve后台，然后一条一条的执行命令1.处理掉企业源r">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://blog.wandhi.com/img/default.avif">
+<meta property="article:published_time" content="2023-08-10T03:44:33.000Z">
+<meta property="article:modified_time" content="2023-08-10T03:48:18.168Z">
+<meta property="article:author" content="MaxZhang">
+<meta property="article:tag" content="DIY">
+<meta property="article:tag" content="PVE">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://blog.wandhi.com/img/default.avif"><meta name="description" content="原文 https:&amp;#x2F;&amp;#x2F;github.com&amp;#x2F;xiangfeidexiaohuo&amp;#x2F;ProxmoxVE-7.0-DIY Proxmox VE 7.x 相关教程 包括但不限于换源、直通、界面显示温度&amp;#x2F;频率等。 Proxmox VE 7.x 换源 必须保证pve系统能联网，没联网，没法换源"><!-- pwa--><meta name="apple-mobile-web-app-capable" content="耕田日记"><meta name="theme-color" content="var(--efu-main)"><meta name="apple-mobile-web-app-status-bar-style" content="var(--efu-main)"><link rel="bookmark" href="/img/pwa/favicon.ico"><link rel="apple-touch-icon" href="/img/pwa/favicon.ico" sizes="180x180"><script>console.log(' %c Solitude %c ' + '1.12.3' + ' %c https://github.com/everfu/hexo-theme-solitude',
+    'background:#35495e ; padding: 1px; border-radius: 3px 0 0 3px;  color: #fff',
+    'background:#ff9a9a ; padding: 1px; border-radius: 0 3px 3px 0;  color: #fff',
+    'background:unset ; padding: 1px; border-radius: 0 3px 3px 0;  color: #fff')
+</script><script>let mdate = "7-8,9-18,12-13";
+mdate = (mdate.split(","));
+let ndate = new Date();
+for (let i of mdate) {
+    if (i === (ndate.getMonth()+1) + "-" + (ndate.getDate())) {
+        document.documentElement.classList.add('memorial');
+    }
+}
+</script><script>(()=>{
+        const saveToLocal = {
+            set: function setWithExpiry(key, value, ttl) {
+                if (ttl === 0)
+                    return
+                const now = new Date()
+                const expiryDay = ttl * 86400000
+                const item = {
+                    value: value,
+                    expiry: now.getTime() + expiryDay
+                }
+                localStorage.setItem(key, JSON.stringify(item))
+            },
+            get: function getWithExpiry(key) {
+                const itemStr = localStorage.getItem(key)
+    
+                if (!itemStr) {
+                    return undefined
+                }
+                const item = JSON.parse(itemStr)
+                const now = new Date()
+    
+                if (now.getTime() > item.expiry) {
+                    localStorage.removeItem(key)
+                    return undefined
+                }
+                return item.value
+            }
+        };
+        window.utils = {
+            saveToLocal: saveToLocal,
+            getCSS: (url, id = false) => new Promise((resolve, reject) => {
+              const link = document.createElement('link')
+              link.rel = 'stylesheet'
+              link.href = url
+              if (id) link.id = id
+              link.onerror = reject
+              link.onload = link.onreadystatechange = function() {
+                const loadState = this.readyState
+                if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+                link.onload = link.onreadystatechange = null
+                resolve()
+              }
+              document.head.appendChild(link)
+            }),
+            getScript: (url, attr = {}) => new Promise((resolve, reject) => {
+              const script = document.createElement('script')
+              script.src = url
+              script.async = true
+              script.onerror = reject
+              script.onload = script.onreadystatechange = function() {
+                const loadState = this.readyState
+                if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+                script.onload = script.onreadystatechange = null
+                resolve()
+              }
+    
+              Object.keys(attr).forEach(key => {
+                script.setAttribute(key, attr[key])
+              })
+    
+              document.head.appendChild(script)
+            }),
+            addGlobalFn: (key, fn, name = false, parent = window) => {
+                const globalFn = parent.globalFn || {}
+                const keyObj = globalFn[key] || {}
+        
+                if (name && keyObj[name]) return
+        
+                name = name || Object.keys(keyObj).length
+                keyObj[name] = fn
+                globalFn[key] = keyObj
+                parent.globalFn = globalFn
+            },
+        }
+    })()</script><!-- global head--><script>const GLOBAL_CONFIG = {
+    root: '/',
+    algolia: undefined,
+    localsearch: undefined,
+    runtime: '2023-04-20 00:00:00',
+    lazyload: {
+        enable: true,
+        error: '/img/error_load.avif'
+    },
+    copyright: {"limit":50,"author":"作者: MaxZhang","link":"链接: ","source":"来源: 耕田日记","info":"著作权归作者所有。 商业转载请联系作者获得授权，非商业转载请注明出处。"},
+    highlight: {"limit":200,"expand":true,"copy":true,"syntax":"prismjs"},
+    randomlink: false,
+    lang: {"theme":{"dark":"已切换至深色模式","light":"已切换至浅色模式"},"copy":{"success":"复制成功","error":"复制失败"},"backtop":"返回顶部","time":{"day":"天前","hour":"小时前","just":"刚刚","min":"分钟前","month":"个月前"},"day":" 天","f12":"开发者模式已打开，请遵循GPL协议。","totalk":"无需删除空行，直接输入评论即可","barrage":{"title":"热评"}},
+    aside: {
+        sayhello: {
+            morning: '一日之计在于晨',
+            noon: '吃饱了才有力气干活',
+            afternoon: '集中精力，攻克难关',
+            night: '不要太劳累了，早睡更健康',
+            goodnight: '睡个好觉，保证精力充沛',
+        },
+        sayhello2: [],
+        sayhello3: {
+            prefix: '好久不见，',
+            back: '欢迎再次回来，',
+        },
+    },
+    covercolor: {
+        enable: true
+    },
+    comment: {"avatar":"https://cravatar.cn","commentBarrage":true},
+    lightbox: 'fancybox',
+    post_ai: false,
+    right_menu: {"mode":{"dark":"深色模式","light":"浅色模式"},"img_error":"此图片无法复制与下载","barrage":{"open":"显示热评","close":"关闭热评"},"translate":{"translateDelay":0,"defaultEncoding":2}},
+};</script><!-- page-config head--><script id="config-diff">var PAGE_CONFIG = {
+    is_post: true,
+    is_page: false,
+    is_home: false,
+    page: '',
+    toc: true,
+    comment: true,
+    ai_text: false
+}</script><meta name="generator" content="Hexo 7.3.0"></head><body id="body"><!-- universe--><canvas id="universe"></canvas><!-- loading--><!-- console--><div id="console"><div class="close-btn" onclick="sco.hideConsole()"><i class="solitude st-close-fill"></i></div><div class="console-card-group"><div class="console-card-group-right"><div class="console-card tags" onclick="sco.hideConsole()"><div class="card-content"><div class="author-content-item-tips">标签</div><div class="author-content-item-title">寻找感兴趣的领域</div></div><div class="card-tag-cloud"><a href="/tags/%E5%B9%BF%E5%91%8A/">广告<sup>1</sup></a><a href="/tags/google%E8%81%94%E7%9B%9F/">google联盟<sup>1</sup></a><a href="/tags/mysql/">mysql<sup>1</sup></a><a href="/tags/1067/">1067<sup>1</sup></a><a href="/tags/webhook/">webhook<sup>1</sup></a><a href="/tags/%E8%87%AA%E5%8A%A8%E5%8C%96%E9%83%A8%E7%BD%B2/">自动化部署<sup>1</sup></a><a href="/tags/laravel/">laravel<sup>3</sup></a><a href="/tags/%E7%B1%BB%E5%BA%93/">类库<sup>1</sup></a><a href="/tags/Linux/">Linux<sup>7</sup></a><a href="/tags/Swoole/">Swoole<sup>1</sup></a><a href="/tags/%E4%B8%89%E6%96%B9%E7%99%BB%E9%99%86/">三方登陆<sup>1</sup></a><a href="/tags/Memcache/">Memcache<sup>1</sup></a><a href="/tags/%E7%BC%93%E5%AD%98/">缓存<sup>1</sup></a><a href="/tags/Cron/">Cron<sup>1</sup></a><a href="/tags/OneDrive/">OneDrive<sup>1</sup></a><a href="/tags/Rclone/">Rclone<sup>1</sup></a><a href="/tags/%E5%B0%8F%E7%A8%8B%E5%BA%8F/">小程序<sup>3</sup></a><a href="/tags/%E5%BE%AE%E4%BF%A1/">微信<sup>1</sup></a><a href="/tags/ec2/">ec2<sup>1</sup></a><a href="/tags/AWS/">AWS<sup>1</sup></a><a href="/tags/AdGuard/">AdGuard<sup>1</sup></a><a href="/tags/jetbrains/">jetbrains<sup>1</sup></a><a href="/tags/UI/">UI<sup>1</sup></a><a href="/tags/%E6%8A%93%E5%8C%85/">抓包<sup>1</sup></a><a href="/tags/charles/">charles<sup>1</sup></a><a href="/tags/%E5%B9%BB%E5%85%BD%E5%B8%95%E9%B2%81/">幻兽帕鲁<sup>1</sup></a><a href="/tags/palworld/">palworld<sup>1</sup></a><a href="/tags/Elasticsearch/">Elasticsearch<sup>1</sup></a><a href="/tags/net/">.net<sup>1</sup></a><a href="/tags/C/">C#<sup>1</sup></a><a href="/tags/nest/">nest<sup>1</sup></a><a href="/tags/%E5%85%A8%E6%96%87%E6%A3%80%E7%B4%A2/">全文检索<sup>1</sup></a><a href="/tags/es/">es<sup>1</sup></a><a href="/tags/%E5%88%86%E8%AF%8D%E5%99%A8/">分词器<sup>1</sup></a><a href="/tags/%E6%96%87%E4%BB%B6/">文件<sup>2</sup></a><a href="/tags/Centos/">Centos<sup>1</sup></a><a href="/tags/%E9%87%8D%E5%A4%8D/">重复<sup>1</sup></a><a href="/tags/%E6%89%A7%E8%A1%8C/">执行<sup>1</sup></a><a href="/tags/%E6%A0%BC%E5%BC%8F%E5%8C%96/">格式化<sup>1</sup></a><a href="/tags/%E5%9B%BE%E7%89%87%E5%8E%8B%E7%BC%A9/">图片压缩<sup>1</sup></a><a href="/tags/%E4%BA%8C%E8%BF%9B%E5%88%B6/">二进制<sup>1</sup></a><a href="/tags/SqlServer/">SqlServer<sup>1</sup></a><a href="/tags/Mac/">Mac<sup>1</sup></a><a href="/tags/%E5%90%AF%E5%8A%A8%E5%8F%B0/">启动台<sup>1</sup></a><a href="/tags/python/">python<sup>1</sup></a><a href="/tags/%E4%BE%9D%E8%B5%96/">依赖<sup>1</sup></a><a href="/tags/%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83/">开发环境<sup>1</sup></a><a href="/tags/IOS/">IOS<sup>1</sup></a><a href="/tags/%E5%8F%8D%E5%90%91%E4%BB%A3%E7%90%86/">反向代理<sup>1</sup></a><a href="/tags/cookie/">cookie<sup>1</sup></a><a href="/tags/%E9%80%9F%E9%80%9A/">速通<sup>1</sup></a><a href="/tags/%E5%AD%A6%E4%B9%A0/">学习<sup>1</sup></a><a href="/tags/%E9%BC%BB%E7%82%8E/">鼻炎<sup>1</sup></a><a href="/tags/%E4%BE%BF%E6%90%BA%E7%89%88/">便携版<sup>1</sup></a><a href="/tags/%E7%BB%BF%E8%89%B2%E7%89%88/">绿色版<sup>1</sup></a><a href="/tags/Chrome/">Chrome<sup>1</sup></a><a href="/tags/MAC/">MAC<sup>1</sup></a><a href="/tags/VNC/">VNC<sup>1</sup></a><a href="/tags/DIY/">DIY<sup>1</sup></a><a href="/tags/PVE/">PVE<sup>1</sup></a><a href="/tags/ChatGPT/">ChatGPT<sup>1</sup></a><a href="/tags/prompt/">prompt<sup>1</sup></a><a href="/tags/%E6%8C%87%E5%8D%97/">指南<sup>1</sup></a><a href="/tags/%E7%9B%B8%E4%BA%B2/">相亲<sup>1</sup></a><a href="/tags/%E5%9C%A3%E7%BB%8F/">圣经<sup>1</sup></a><a href="/tags/Prompt/">Prompt<sup>3</sup></a><a href="/tags/%E7%BB%93%E6%9E%84%E5%8C%96/">结构化<sup>1</sup></a><a href="/tags/%E7%BB%93%E6%9E%84%E5%8C%96Prompt/">结构化Prompt<sup>1</sup></a><a href="/tags/%E6%8F%90%E7%A4%BA%E8%AF%8D/">提示词<sup>1</sup></a><a href="/tags/%E7%83%AD%E5%8A%9B%E5%9B%BE/">热力图<sup>1</sup></a><a href="/tags/PC/">PC<sup>2</sup></a><a href="/tags/composer/">composer<sup>1</sup></a><a href="/tags/%E4%B8%8B%E8%BD%BD%E5%99%A8/">下载器<sup>1</sup></a><a href="/tags/php/">php<sup>2</sup></a><a href="/tags/%E9%87%8D%E5%91%BD%E5%90%8D/">重命名<sup>1</sup></a><a href="/tags/%E6%97%A5%E6%9C%9F%E6%93%8D%E4%BD%9C/">日期操作<sup>1</sup></a><a href="/tags/%E6%97%B6%E5%8C%BA/">时区<sup>1</sup></a><a href="/tags/%E5%8F%98%E6%9B%B4/">变更<sup>1</sup></a><a href="/tags/docker/">docker<sup>2</sup></a><a href="/tags/push/">push<sup>1</sup></a><a href="/tags/%E8%BF%90%E8%A1%8C%E4%B8%AD/">运行中<sup>1</sup></a><a href="/tags/%E8%B7%AF%E5%BE%84/">路径<sup>1</sup></a><a href="/tags/%E6%8C%82%E8%BD%BD/">挂载<sup>1</sup></a><a href="/tags/beanstalk/">beanstalk<sup>1</sup></a><a href="/tags/sqlserver/">sqlserver<sup>1</sup></a><a href="/tags/sql/">sql<sup>1</sup></a><a href="/tags/%E8%BD%AC%E4%B9%89/">转义<sup>1</sup></a></div></div><div class="console-card history" onclick="sco.hideConsole()"><ul class="card-archive-list"><li class="card-archive-list-item"><a class="card-archive-list-link" href="/archives/2024/06/"><span class="card-archive-list-date">2024/06</span><div class="card-archive-list-count-group"><span class="card-archive-list-count">1</span><span class="card-archive-list-count-unit">篇</span></div></a></li><li class="card-archive-list-item"><a class="card-archive-list-link" href="/archives/2024/05/"><span class="card-archive-list-date">2024/05</span><div class="card-archive-list-count-group"><span class="card-archive-list-count">1</span><span class="card-archive-list-count-unit">篇</span></div></a></li><li class="card-archive-list-item"><a class="card-archive-list-link" href="/archives/2024/04/"><span class="card-archive-list-date">2024/04</span><div class="card-archive-list-count-group"><span class="card-archive-list-count">1</span><span class="card-archive-list-count-unit">篇</span></div></a></li><li class="card-archive-list-item"><a class="card-archive-list-link" href="/archives/2024/03/"><span class="card-archive-list-date">2024/03</span><div class="card-archive-list-count-group"><span class="card-archive-list-count">1</span><span class="card-archive-list-count-unit">篇</span></div></a></li><li class="card-archive-list-item"><a class="card-archive-list-link" href="/archives/2024/01/"><span class="card-archive-list-date">2024/01</span><div class="card-archive-list-count-group"><span class="card-archive-list-count">1</span><span class="card-archive-list-count-unit">篇</span></div></a></li><li class="card-archive-list-item"><a class="card-archive-list-link" href="/archives/2023/10/"><span class="card-archive-list-date">2023/10</span><div class="card-archive-list-count-group"><span class="card-archive-list-count">1</span><span class="card-archive-list-count-unit">篇</span></div></a></li><li class="card-archive-list-item"><a class="card-archive-list-link" href="/archives/2023/09/"><span class="card-archive-list-date">2023/09</span><div class="card-archive-list-count-group"><span class="card-archive-list-count">2</span><span class="card-archive-list-count-unit">篇</span></div></a></li><li class="card-archive-list-item"><a class="card-archive-list-link" href="/archives/2023/08/"><span class="card-archive-list-date">2023/08</span><div class="card-archive-list-count-group"><span class="card-archive-list-count">3</span><span class="card-archive-list-count-unit">篇</span></div></a></li><li class="card-archive-list-item"><a class="card-archive-list-link" href="/archives/2023/07/"><span class="card-archive-list-date">2023/07</span><div class="card-archive-list-count-group"><span class="card-archive-list-count">2</span><span class="card-archive-list-count-unit">篇</span></div></a></li><li class="card-archive-list-item"><a class="card-archive-list-link" href="/archives/2023/06/"><span class="card-archive-list-date">2023/06</span><div class="card-archive-list-count-group"><span class="card-archive-list-count">1</span><span class="card-archive-list-count-unit">篇</span></div></a></li><li class="card-archive-list-item"><a class="card-archive-list-link" href="/archives/2023/05/"><span class="card-archive-list-date">2023/05</span><div class="card-archive-list-count-group"><span class="card-archive-list-count">2</span><span class="card-archive-list-count-unit">篇</span></div></a></li><li class="card-archive-list-item"><a class="card-archive-list-link" href="/archives/2023/04/"><span class="card-archive-list-date">2023/04</span><div class="card-archive-list-count-group"><span class="card-archive-list-count">1</span><span class="card-archive-list-count-unit">篇</span></div></a></li><li class="card-archive-list-item"><a class="card-archive-list-link" href="/archives/2023/03/"><span class="card-archive-list-date">2023/03</span><div class="card-archive-list-count-group"><span class="card-archive-list-count">3</span><span class="card-archive-list-count-unit">篇</span></div></a></li><li class="card-archive-list-item"><a class="card-archive-list-link" href="/archives/2023/01/"><span class="card-archive-list-date">2023/01</span><div class="card-archive-list-count-group"><span class="card-archive-list-count">1</span><span class="card-archive-list-count-unit">篇</span></div></a></li><li class="card-archive-list-item"><a class="card-archive-list-link" href="/archives/2022/12/"><span class="card-archive-list-date">2022/12</span><div class="card-archive-list-count-group"><span class="card-archive-list-count">2</span><span class="card-archive-list-count-unit">篇</span></div></a></li><li class="card-archive-list-item"><a class="card-archive-list-link" href="/archives/2022/11/"><span class="card-archive-list-date">2022/11</span><div class="card-archive-list-count-group"><span class="card-archive-list-count">1</span><span class="card-archive-list-count-unit">篇</span></div></a></li><li class="card-archive-list-item"><a class="card-archive-list-link" href="/archives/2022/10/"><span class="card-archive-list-date">2022/10</span><div class="card-archive-list-count-group"><span class="card-archive-list-count">1</span><span class="card-archive-list-count-unit">篇</span></div></a></li><li class="card-archive-list-item"><a class="card-archive-list-link" href="/archives/2022/09/"><span class="card-archive-list-date">2022/09</span><div class="card-archive-list-count-group"><span class="card-archive-list-count">4</span><span class="card-archive-list-count-unit">篇</span></div></a></li><li class="card-archive-list-item"><a class="card-archive-list-link" href="/archives/2022/08/"><span class="card-archive-list-date">2022/08</span><div class="card-archive-list-count-group"><span class="card-archive-list-count">7</span><span class="card-archive-list-count-unit">篇</span></div></a></li><li class="card-archive-list-item"><a class="card-archive-list-link" href="/archives/2022/07/"><span class="card-archive-list-date">2022/07</span><div class="card-archive-list-count-group"><span class="card-archive-list-count">1</span><span class="card-archive-list-count-unit">篇</span></div></a></li><li class="card-archive-list-item"><a class="card-archive-list-link" href="/archives/2022/06/"><span class="card-archive-list-date">2022/06</span><div class="card-archive-list-count-group"><span class="card-archive-list-count">4</span><span class="card-archive-list-count-unit">篇</span></div></a></li><li class="card-archive-list-item"><a class="card-archive-list-link" href="/archives/2022/05/"><span class="card-archive-list-date">2022/05</span><div class="card-archive-list-count-group"><span class="card-archive-list-count">1</span><span class="card-archive-list-count-unit">篇</span></div></a></li><li class="card-archive-list-item"><a class="card-archive-list-link" href="/archives/2022/04/"><span class="card-archive-list-date">2022/04</span><div class="card-archive-list-count-group"><span class="card-archive-list-count">2</span><span class="card-archive-list-count-unit">篇</span></div></a></li><li class="card-archive-list-item"><a class="card-archive-list-link" href="/archives/2022/03/"><span class="card-archive-list-date">2022/03</span><div class="card-archive-list-count-group"><span class="card-archive-list-count">2</span><span class="card-archive-list-count-unit">篇</span></div></a></li><li class="card-archive-list-item"><a class="card-archive-list-link" href="/archives/2022/02/"><span class="card-archive-list-date">2022/02</span><div class="card-archive-list-count-group"><span class="card-archive-list-count">7</span><span class="card-archive-list-count-unit">篇</span></div></a></li><li class="card-archive-list-item"><a class="card-archive-list-link" href="/archives/2022/01/"><span class="card-archive-list-date">2022/01</span><div class="card-archive-list-count-group"><span class="card-archive-list-count">5</span><span class="card-archive-list-count-unit">篇</span></div></a></li><li class="card-archive-list-item"><a class="card-archive-list-link" href="/archives/2021/12/"><span class="card-archive-list-date">2021/12</span><div class="card-archive-list-count-group"><span class="card-archive-list-count">2</span><span class="card-archive-list-count-unit">篇</span></div></a></li><li class="card-archive-list-item"><a class="card-archive-list-link" href="/archives/2020/12/"><span class="card-archive-list-date">2020/12</span><div class="card-archive-list-count-group"><span class="card-archive-list-count">3</span><span class="card-archive-list-count-unit">篇</span></div></a></li><li class="card-archive-list-item"><a class="card-archive-list-link" href="/archives/2019/12/"><span class="card-archive-list-date">2019/12</span><div class="card-archive-list-count-group"><span class="card-archive-list-count">1</span><span class="card-archive-list-count-unit">篇</span></div></a></li><li class="card-archive-list-item"><a class="card-archive-list-link" href="/archives/2018/01/"><span class="card-archive-list-date">2018/01</span><div class="card-archive-list-count-group"><span class="card-archive-list-count">1</span><span class="card-archive-list-count-unit">篇</span></div></a></li><li class="card-archive-list-item"><a class="card-archive-list-link" href="/archives/2017/12/"><span class="card-archive-list-date">2017/12</span><div class="card-archive-list-count-group"><span class="card-archive-list-count">8</span><span class="card-archive-list-count-unit">篇</span></div></a></li><li class="card-archive-list-item"><a class="card-archive-list-link" href="/archives/2017/11/"><span class="card-archive-list-date">2017/11</span><div class="card-archive-list-count-group"><span class="card-archive-list-count">1</span><span class="card-archive-list-count-unit">篇</span></div></a></li><li class="card-archive-list-item"><a class="card-archive-list-link" href="/archives/2017/10/"><span class="card-archive-list-date">2017/10</span><div class="card-archive-list-count-group"><span class="card-archive-list-count">2</span><span class="card-archive-list-count-unit">篇</span></div></a></li><li class="card-archive-list-item"><a class="card-archive-list-link" href="/archives/2017/05/"><span class="card-archive-list-date">2017/05</span><div class="card-archive-list-count-group"><span class="card-archive-list-count">2</span><span class="card-archive-list-count-unit">篇</span></div></a></li></ul></div></div></div><div class="button-group"><div class="console-btn-item"><span class="darkmode_switchbutton" onclick="sco.switchDarkMode()" title="昼夜切换"><i class="solitude st-moon-clear-fill"></i></span></div><div class="console-btn-item" id="consoleHideAside"><span class="asideSwitch" onclick="sco.switchHideAside()" title="边栏显示控制"><i class="solitude st-side-bar-fill"></i></span></div><div class="console-btn-item on" id="consoleCommentBarrage" onclick="sco.switchCommentBarrage()"><span class="commentBarrage"><i class="solitude st-chat-fill"></i></span></div></div><div class="console-mask" onclick="sco.hideConsole()"></div></div><!-- sidebar--><div id="sidebar" style="zoom: 1;"><div id="menu-mask" style="display: none;"></div><div id="sidebar-menus"><div class="site-data"><div class="data-item is-center"><div class="data-item-link"><a href="/archives/"><div class="headline">文章</div><div class="length-num">78</div></a></div></div><div class="data-item is-center"><div class="data-item-link"><a href="/categories/"><div class="headline">分类</div><div class="length-num">5</div></a></div></div><div class="data-item is-center"><div class="data-item-link"><a href="/tags/"><div class="headline">标签</div><div class="length-num">87</div></a></div></div></div><span class="sidebar-menu-item-title">功能</span><div class="sidebar-menu-item"><span class="darkmode_switchbutton menu-child" onclick="sco.switchDarkMode()"><i class="solitude st-moon-clear-fill"></i><span>显示模式</span></span></div><span class="sidebar-menu-item-title">标签</span><div class="card-widget card-tags card-archives card-webinfo card-allinfo"><div class="card-tag-cloud"><a href="/tags/%E5%B9%BF%E5%91%8A/">广告<sup>1</sup></a><a href="/tags/google%E8%81%94%E7%9B%9F/">google联盟<sup>1</sup></a><a href="/tags/mysql/">mysql<sup>1</sup></a><a href="/tags/1067/">1067<sup>1</sup></a><a href="/tags/webhook/">webhook<sup>1</sup></a><a href="/tags/%E8%87%AA%E5%8A%A8%E5%8C%96%E9%83%A8%E7%BD%B2/">自动化部署<sup>1</sup></a><a href="/tags/laravel/">laravel<sup>3</sup></a><a href="/tags/%E7%B1%BB%E5%BA%93/">类库<sup>1</sup></a><a href="/tags/Linux/">Linux<sup>7</sup></a><a href="/tags/Swoole/">Swoole<sup>1</sup></a><a href="/tags/%E4%B8%89%E6%96%B9%E7%99%BB%E9%99%86/">三方登陆<sup>1</sup></a><a href="/tags/Memcache/">Memcache<sup>1</sup></a><a href="/tags/%E7%BC%93%E5%AD%98/">缓存<sup>1</sup></a><a href="/tags/Cron/">Cron<sup>1</sup></a><a href="/tags/OneDrive/">OneDrive<sup>1</sup></a><a href="/tags/Rclone/">Rclone<sup>1</sup></a><a href="/tags/%E5%B0%8F%E7%A8%8B%E5%BA%8F/">小程序<sup>3</sup></a><a href="/tags/%E5%BE%AE%E4%BF%A1/">微信<sup>1</sup></a><a href="/tags/ec2/">ec2<sup>1</sup></a><a href="/tags/AWS/">AWS<sup>1</sup></a><a href="/tags/AdGuard/">AdGuard<sup>1</sup></a><a href="/tags/jetbrains/">jetbrains<sup>1</sup></a><a href="/tags/UI/">UI<sup>1</sup></a><a href="/tags/%E6%8A%93%E5%8C%85/">抓包<sup>1</sup></a><a href="/tags/charles/">charles<sup>1</sup></a><a href="/tags/%E5%B9%BB%E5%85%BD%E5%B8%95%E9%B2%81/">幻兽帕鲁<sup>1</sup></a><a href="/tags/palworld/">palworld<sup>1</sup></a><a href="/tags/Elasticsearch/">Elasticsearch<sup>1</sup></a><a href="/tags/net/">.net<sup>1</sup></a><a href="/tags/C/">C#<sup>1</sup></a><a href="/tags/nest/">nest<sup>1</sup></a><a href="/tags/%E5%85%A8%E6%96%87%E6%A3%80%E7%B4%A2/">全文检索<sup>1</sup></a><a href="/tags/es/">es<sup>1</sup></a><a href="/tags/%E5%88%86%E8%AF%8D%E5%99%A8/">分词器<sup>1</sup></a><a href="/tags/%E6%96%87%E4%BB%B6/">文件<sup>2</sup></a><a href="/tags/Centos/">Centos<sup>1</sup></a><a href="/tags/%E9%87%8D%E5%A4%8D/">重复<sup>1</sup></a><a href="/tags/%E6%89%A7%E8%A1%8C/">执行<sup>1</sup></a><a href="/tags/%E6%A0%BC%E5%BC%8F%E5%8C%96/">格式化<sup>1</sup></a><a href="/tags/%E5%9B%BE%E7%89%87%E5%8E%8B%E7%BC%A9/">图片压缩<sup>1</sup></a><a href="/tags/%E4%BA%8C%E8%BF%9B%E5%88%B6/">二进制<sup>1</sup></a><a href="/tags/SqlServer/">SqlServer<sup>1</sup></a><a href="/tags/Mac/">Mac<sup>1</sup></a><a href="/tags/%E5%90%AF%E5%8A%A8%E5%8F%B0/">启动台<sup>1</sup></a><a href="/tags/python/">python<sup>1</sup></a><a href="/tags/%E4%BE%9D%E8%B5%96/">依赖<sup>1</sup></a><a href="/tags/%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83/">开发环境<sup>1</sup></a><a href="/tags/IOS/">IOS<sup>1</sup></a><a href="/tags/%E5%8F%8D%E5%90%91%E4%BB%A3%E7%90%86/">反向代理<sup>1</sup></a><a href="/tags/cookie/">cookie<sup>1</sup></a><a href="/tags/%E9%80%9F%E9%80%9A/">速通<sup>1</sup></a><a href="/tags/%E5%AD%A6%E4%B9%A0/">学习<sup>1</sup></a><a href="/tags/%E9%BC%BB%E7%82%8E/">鼻炎<sup>1</sup></a><a href="/tags/%E4%BE%BF%E6%90%BA%E7%89%88/">便携版<sup>1</sup></a><a href="/tags/%E7%BB%BF%E8%89%B2%E7%89%88/">绿色版<sup>1</sup></a><a href="/tags/Chrome/">Chrome<sup>1</sup></a><a href="/tags/MAC/">MAC<sup>1</sup></a><a href="/tags/VNC/">VNC<sup>1</sup></a><a href="/tags/DIY/">DIY<sup>1</sup></a><a href="/tags/PVE/">PVE<sup>1</sup></a><a href="/tags/ChatGPT/">ChatGPT<sup>1</sup></a><a href="/tags/prompt/">prompt<sup>1</sup></a><a href="/tags/%E6%8C%87%E5%8D%97/">指南<sup>1</sup></a><a href="/tags/%E7%9B%B8%E4%BA%B2/">相亲<sup>1</sup></a><a href="/tags/%E5%9C%A3%E7%BB%8F/">圣经<sup>1</sup></a><a href="/tags/Prompt/">Prompt<sup>3</sup></a><a href="/tags/%E7%BB%93%E6%9E%84%E5%8C%96/">结构化<sup>1</sup></a><a href="/tags/%E7%BB%93%E6%9E%84%E5%8C%96Prompt/">结构化Prompt<sup>1</sup></a><a href="/tags/%E6%8F%90%E7%A4%BA%E8%AF%8D/">提示词<sup>1</sup></a><a href="/tags/%E7%83%AD%E5%8A%9B%E5%9B%BE/">热力图<sup>1</sup></a><a href="/tags/PC/">PC<sup>2</sup></a><a href="/tags/composer/">composer<sup>1</sup></a><a href="/tags/%E4%B8%8B%E8%BD%BD%E5%99%A8/">下载器<sup>1</sup></a><a href="/tags/php/">php<sup>2</sup></a><a href="/tags/%E9%87%8D%E5%91%BD%E5%90%8D/">重命名<sup>1</sup></a><a href="/tags/%E6%97%A5%E6%9C%9F%E6%93%8D%E4%BD%9C/">日期操作<sup>1</sup></a><a href="/tags/%E6%97%B6%E5%8C%BA/">时区<sup>1</sup></a><a href="/tags/%E5%8F%98%E6%9B%B4/">变更<sup>1</sup></a><a href="/tags/docker/">docker<sup>2</sup></a><a href="/tags/push/">push<sup>1</sup></a><a href="/tags/%E8%BF%90%E8%A1%8C%E4%B8%AD/">运行中<sup>1</sup></a><a href="/tags/%E8%B7%AF%E5%BE%84/">路径<sup>1</sup></a><a href="/tags/%E6%8C%82%E8%BD%BD/">挂载<sup>1</sup></a><a href="/tags/beanstalk/">beanstalk<sup>1</sup></a><a href="/tags/sqlserver/">sqlserver<sup>1</sup></a><a href="/tags/sql/">sql<sup>1</sup></a><a href="/tags/%E8%BD%AC%E4%B9%89/">转义<sup>1</sup></a></div></div></div></div><!-- keyboard--><div class="post" id="body-wrap"><header class="post-bg" id="page-header"><nav class="show" id="nav"><div id="nav-group"><div id="blog_name"><a id="site-name" href="/" title="返回博客主页"><span class="title">耕田日记</span></a></div><div id="page-name-mask"><div id="page-name"><a id="page-name-text" onclick="sco.toTop()">PVE7.0-DIY</a></div></div><div id="menus"></div><div id="nav-left"></div><div id="nav-right"><div class="nav-button" id="randomPost_button"><a class="site-page" onclick="toRandomPost()" title="随机一篇文章" href="javascript:void(0);"><i class="solitude st-dice-line"></i></a></div><div class="nav-button" id="nav-totop" onclick="sco.toTop()"><a class="totopbtn"><i class="solitude st-arrow-up-line"></i><span id="percent">0</span></a></div><div id="toggle-menu"><a class="site-page"><i class="solitude st-menu-line"></i></a></div></div></div></nav><div class="coverdiv" id="coverdiv"><img class="nolazyload" id="post-cover" src="/img/default.avif" alt="PVE7.0-DIY"></div><div id="post-info"><div id="post-firstinfo"><div class="meta-firstline"><a class="post-meta-original" title="该文章为原创文章，注意版权协议">原创</a><span class="post-meta-categories"><a class="post-meta-categories" href="/categories/%E7%9F%A5%E8%AF%86%E7%A2%8E%E7%89%87/">知识碎片</a></span><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/DIY/"><span class="tags-name tags-punctuation">DIY</span></a><a class="post-meta__tags" href="/tags/PVE/"><span class="tags-name tags-punctuation">PVE</span></a></div></div></div></div><h1 class="post-title">PVE7.0-DIY</h1><div id="post-meta"><div class="meta-secondline"></div></div></div><section class="main-hero-waves-area waves-area"><svg class="waves-svg" xmlns="http://www.w3.org/2000/svg" xlink="http://www.w3.org/1999/xlink" viewBox="0 24 150 28" preserveAspectRatio="none" shape-rendering="auto"><defs><path id="gentle-wave" d="M -160 44 c 30 0 58 -18 88 -18 s 58 18 88 18 s 58 -18 88 -18 s 58 18 88 18 v 44 h -352 Z"></path></defs><g class="parallax"><use href="#gentle-wave" x="48" y="0"></use><use href="#gentle-wave" x="48" y="3"></use><use href="#gentle-wave" x="48" y="5"></use><use href="#gentle-wave" x="48" y="7"></use></g></svg></section></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><blockquote>
+<p>原文 <a target="_blank" rel="noopener" href="https://github.com/xiangfeidexiaohuo/ProxmoxVE-7.0-DIY">https://github.com/xiangfeidexiaohuo/ProxmoxVE-7.0-DIY</a></p>
+</blockquote>
+<h2 id="Proxmox-VE-7-x-相关教程"><a href="#Proxmox-VE-7-x-相关教程" class="headerlink" title="Proxmox VE 7.x 相关教程"></a>Proxmox VE 7.x 相关教程</h2><ul>
+<li><strong>包括但不限于换源、直通、界面显示温度&#x2F;频率等。</strong></li>
+</ul>
+<hr>
+<h3 id="Proxmox-VE-7-x-换源"><a href="#Proxmox-VE-7-x-换源" class="headerlink" title="Proxmox VE 7.x 换源"></a>Proxmox VE 7.x 换源</h3><ul>
+<li><strong>必须保证pve系统能联网，没联网，没法换源。</strong></li>
+</ul>
+<details>
+<summary>点击展开，查看详细教程！</summary>
+
+<h4 id="SSH登录到pve后台，然后一条一条的执行命令"><a href="#SSH登录到pve后台，然后一条一条的执行命令" class="headerlink" title="SSH登录到pve后台，然后一条一条的执行命令"></a>SSH登录到pve后台，然后一条一条的执行命令</h4><h4 id="1-处理掉企业源"><a href="#1-处理掉企业源" class="headerlink" title="1.处理掉企业源"></a>1.处理掉企业源</h4><pre class="line-numbers language-none"><code class="language-none">rm -rf &#x2F;etc&#x2F;apt&#x2F;sources.list.d&#x2F;pve-install-repo.list<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+<pre class="line-numbers language-none"><code class="language-none">echo &quot;#deb https:&#x2F;&#x2F;enterprise.proxmox.com&#x2F;debian&#x2F;pve Bullseye pve-enterprise&quot; &gt; &#x2F;etc&#x2F;apt&#x2F;sources.list.d&#x2F;pve-enterprise.list<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+
+<h4 id="2-开始换源"><a href="#2-开始换源" class="headerlink" title="2.开始换源"></a>2.开始换源</h4><pre class="line-numbers language-none"><code class="language-none">wget https:&#x2F;&#x2F;mirrors.ustc.edu.cn&#x2F;proxmox&#x2F;debian&#x2F;proxmox-release-bullseye.gpg -O &#x2F;etc&#x2F;apt&#x2F;trusted.gpg.d&#x2F;proxmox-release-bullseye.gpg<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+<pre class="line-numbers language-none"><code class="language-none">echo &quot;deb https:&#x2F;&#x2F;mirrors.ustc.edu.cn&#x2F;proxmox&#x2F;debian&#x2F;pve bullseye pve-no-subscription&quot; &gt; &#x2F;etc&#x2F;apt&#x2F;sources.list.d&#x2F;pve-no-subscription.list<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+<pre class="line-numbers language-none"><code class="language-none">echo &quot;deb https:&#x2F;&#x2F;mirrors.ustc.edu.cn&#x2F;proxmox&#x2F;debian&#x2F;ceph-pacific bullseye main&quot; &gt; &#x2F;etc&#x2F;apt&#x2F;sources.list.d&#x2F;ceph.list<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+<pre class="line-numbers language-none"><code class="language-none">sed -i.bak &quot;s#http:&#x2F;&#x2F;download.proxmox.com&#x2F;debian#https:&#x2F;&#x2F;mirrors.ustc.edu.cn&#x2F;proxmox&#x2F;debian#g&quot; &#x2F;usr&#x2F;share&#x2F;perl5&#x2F;PVE&#x2F;CLI&#x2F;pveceph.pm<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+<pre class="line-numbers language-none"><code class="language-none">sed -i.bak &quot;s#ftp.debian.org&#x2F;debian#mirrors.aliyun.com&#x2F;debian#g&quot; &#x2F;etc&#x2F;apt&#x2F;sources.list<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+<pre class="line-numbers language-none"><code class="language-none">sed -i &quot;s#security.debian.org#mirrors.aliyun.com&#x2F;debian-security#g&quot; &#x2F;etc&#x2F;apt&#x2F;sources.list<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+<pre class="line-numbers language-none"><code class="language-none">echo &quot;deb http:&#x2F;&#x2F;download.proxmox.com&#x2F;debian&#x2F;pve bullseye pve-no-subscription&quot; &gt;&gt;  &#x2F;etc&#x2F;apt&#x2F;sources.list<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+
+<h4 id="3-最后更新"><a href="#3-最后更新" class="headerlink" title="3.最后更新"></a>3.最后更新</h4><pre class="line-numbers language-none"><code class="language-none">apt update &amp;&amp; apt dist-upgrade -y<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+</details>
+
+
+
+<hr>
+<h3 id="Proxmox-VE-7-x-关订阅提示"><a href="#Proxmox-VE-7-x-关订阅提示" class="headerlink" title="Proxmox VE 7.x 关订阅提示"></a>Proxmox VE 7.x 关订阅提示</h3><details>
+<summary>点击展开，查看详细教程！</summary>
+
+<h4 id="1-WinSCP登录到PVE，编辑打开这个文件：-usr-share-javascript-proxmox-widget-toolkit-proxmoxlib-js-防止手贱，建议备份"><a href="#1-WinSCP登录到PVE，编辑打开这个文件：-usr-share-javascript-proxmox-widget-toolkit-proxmoxlib-js-防止手贱，建议备份" class="headerlink" title="1.WinSCP登录到PVE，编辑打开这个文件：&#x2F;usr&#x2F;share&#x2F;javascript&#x2F;proxmox-widget-toolkit&#x2F;proxmoxlib.js (防止手贱，建议备份)"></a>1.WinSCP登录到PVE，编辑打开这个文件：&#x2F;usr&#x2F;share&#x2F;javascript&#x2F;proxmox-widget-toolkit&#x2F;proxmoxlib.js (防止手贱，建议备份)</h4><h4 id="2-搜索-data-status-toLowerCase，找到这一段："><a href="#2-搜索-data-status-toLowerCase，找到这一段：" class="headerlink" title="2.搜索 data.status.toLowerCase，找到这一段："></a>2.搜索 data.status.toLowerCase，找到这一段：</h4><p><img src= "/img/loading.avif" data-lazy-src="https://raw.githubusercontent.com/xiangfeidexiaohuo/ProxmoxVE-7.0-DIY/master/pic/01.jpg" alt="jpg"></p>
+<h4 id="3-直接删掉红框内容，变成如下图，最后保存即可。"><a href="#3-直接删掉红框内容，变成如下图，最后保存即可。" class="headerlink" title="3.直接删掉红框内容，变成如下图，最后保存即可。"></a>3.直接删掉红框内容，变成如下图，最后保存即可。</h4><p><img src= "/img/loading.avif" data-lazy-src="https://raw.githubusercontent.com/xiangfeidexiaohuo/ProxmoxVE-7.0-DIY/master/pic/02.jpg" alt="jpg"></p>
+<ul>
+<li><p>如果更新到PVE 7.1-5或者更新，发现改了上面的没效果，那么就要多改一步：</p>
+</li>
+<li><p>继续搜索 data.status.toLowerCase，找到这一段：</p>
+</li>
+</ul>
+<p><img src= "/img/loading.avif" data-lazy-src="https://raw.githubusercontent.com/xiangfeidexiaohuo/ProxmoxVE-7.0-DIY/master/pic/03.jpg" alt="jpg"></p>
+<ul>
+<li>直接删掉红框内容，变成如下图，最后保存即可</li>
+</ul>
+<p><img src= "/img/loading.avif" data-lazy-src="https://raw.githubusercontent.com/xiangfeidexiaohuo/ProxmoxVE-7.0-DIY/master/pic/04.jpg" alt="jpg"></p>
+<h4 id="4-改完保存，重进PVE界面刷新，去更新点击刷新，就没订阅提示了。"><a href="#4-改完保存，重进PVE界面刷新，去更新点击刷新，就没订阅提示了。" class="headerlink" title="4.改完保存，重进PVE界面刷新，去更新点击刷新，就没订阅提示了。"></a>4.改完保存，重进PVE界面刷新，去更新点击刷新，就没订阅提示了。</h4></details>
+
+
+
+<hr>
+<h3 id="Proxmox-VE-主界面显示CPU温度"><a href="#Proxmox-VE-主界面显示CPU温度" class="headerlink" title="Proxmox VE 主界面显示CPU温度"></a>Proxmox VE 主界面显示CPU温度</h3><details>
+<summary>点击展开，查看详细教程！</summary>
+
+<h4 id="1-登录PVE的SSH，执行命令安装sensors："><a href="#1-登录PVE的SSH，执行命令安装sensors：" class="headerlink" title="1.登录PVE的SSH，执行命令安装sensors："></a>1.登录PVE的SSH，执行命令安装sensors：</h4><pre class="line-numbers language-none"><code class="language-none">apt-get install lm-sensors<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+<h4 id="2-探测下温度，执行：sensors-detect-一路yes，回车"><a href="#2-探测下温度，执行：sensors-detect-一路yes，回车" class="headerlink" title="2.探测下温度，执行：sensors-detect (一路yes，回车)"></a>2.探测下温度，执行：<code>sensors-detect</code> (一路yes，回车)</h4><h4 id="3-获取温度信息，执行：sensors"><a href="#3-获取温度信息，执行：sensors" class="headerlink" title="3.获取温度信息，执行：sensors"></a>3.获取温度信息，执行：<code>sensors</code></h4><p><img src= "/img/loading.avif" data-lazy-src="https://raw.githubusercontent.com/xiangfeidexiaohuo/ProxmoxVE-7.0-DIY/master/pic/1.jpg" alt="jpg"></p>
+<ul>
+<li><p>红色箭头：temp1这里是主板温度，可能某些主板还有temp2、temp3等</p>
+</li>
+<li><p>黄色箭头：Package id 0、core0~5这里是CPU温度，有多少个核心，就显示多少</p>
+</li>
+</ul>
+<h4 id="4-WinSCP登录到PVE，修改这个文件：-usr-share-perl5-PVE-API2-Nodes-pm"><a href="#4-WinSCP登录到PVE，修改这个文件：-usr-share-perl5-PVE-API2-Nodes-pm" class="headerlink" title="4.WinSCP登录到PVE，修改这个文件：&#x2F;usr&#x2F;share&#x2F;perl5&#x2F;PVE&#x2F;API2&#x2F;Nodes.pm"></a>4.WinSCP登录到PVE，修改这个文件：&#x2F;usr&#x2F;share&#x2F;perl5&#x2F;PVE&#x2F;API2&#x2F;Nodes.pm</h4><p>(我习惯于下载到本地用Notepad++修改)</p>
+<p>搜索：<code>$res-&gt;&#123;pveversion&#125; = PVE::pvecfg::package()</code></p>
+<p>在这个定义的下方添加：<code>$res-&gt;&#123;thermalstate&#125; = `sensors`;</code></p>
+<p>结果如图：</p>
+<p><img src= "/img/loading.avif" data-lazy-src="https://raw.githubusercontent.com/xiangfeidexiaohuo/ProxmoxVE-7.0-DIY/master/pic/2.jpg" alt="jpg"></p>
+<p>修改完保存，然后塞回路径。</p>
+<h4 id="5-修改这个文件：-usr-share-pve-manager-js-pvemanagerlib-js-建议备份，万一自己改炸就不好了。"><a href="#5-修改这个文件：-usr-share-pve-manager-js-pvemanagerlib-js-建议备份，万一自己改炸就不好了。" class="headerlink" title="5.修改这个文件：&#x2F;usr&#x2F;share&#x2F;pve-manager&#x2F;js&#x2F;pvemanagerlib.js (建议备份，万一自己改炸就不好了。)"></a>5.修改这个文件：&#x2F;usr&#x2F;share&#x2F;pve-manager&#x2F;js&#x2F;pvemanagerlib.js (建议备份，万一自己改炸就不好了。)</h4><p>(我习惯于下载到本地用Notepad++修改)</p>
+<p>搜索<code>PVE Manager Version</code></p>
+<p><img src= "/img/loading.avif" data-lazy-src="https://raw.githubusercontent.com/xiangfeidexiaohuo/ProxmoxVE-7.0-DIY/master/pic/3.jpg" alt="jpg"></p>
+<ul>
+<li>在这个定义的下方添加一个定义：</li>
+</ul>
+<pre class="line-numbers language-none"><code class="language-none">&#123;
+      itemId: &#39;thermal&#39;,
+      colspan: 2,
+      printBar: false,
+      title: gettext(&#39;温度&#39;),
+      textField: &#39;thermalstate&#39;,
+      renderer:function(value)&#123;
+          const p0 &#x3D; value.match(&#x2F;Package id 0.*?\+([\d\.]+)Â&#x2F;)[1];
+          const b0 &#x3D; value.match(&#x2F;temp1.*?\+([\d\.]+)?&#x2F;)[1];
+          return &#96;CPU: $&#123;p0&#125; ℃ || 主板: $&#123;b0&#125; ℃ &#96;
+        &#125;
+&#125;,<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>结果如图：</p>
+<p><img src= "/img/loading.avif" data-lazy-src="https://raw.githubusercontent.com/xiangfeidexiaohuo/ProxmoxVE-7.0-DIY/master/pic/4.jpg" alt="jpg"></p>
+<ul>
+<li>上述是一种比较简单的万金油做法，有些人可能要把每个核心的温度有写出来，或者说有几个主板温度，也要一起写出来，那么就按照下列的格式：</li>
+</ul>
+<pre class="line-numbers language-none"><code class="language-none">&#123;
+      itemId: &#39;thermal&#39;,
+      colspan: 2,
+      printBar: false,
+      title: gettext(&#39;温度&#39;),
+      textField: &#39;thermalstate&#39;,
+      renderer:function(value)&#123;
+          const p0 &#x3D; value.match(&#x2F;Package id 0.*?\+([\d\.]+)Â&#x2F;)[1];
+          const c0 &#x3D; value.match(&#x2F;Core 0.*?\+([\d\.]+)Â&#x2F;)[1];
+          const c1 &#x3D; value.match(&#x2F;Core 1.*?\+([\d\.]+)Â&#x2F;)[1];
+          const c2 &#x3D; value.match(&#x2F;Core 2.*?\+([\d\.]+)Â&#x2F;)[1];
+          const c3 &#x3D; value.match(&#x2F;Core 3.*?\+([\d\.]+)Â&#x2F;)[1];
+          const c4 &#x3D; value.match(&#x2F;Core 4.*?\+([\d\.]+)Â&#x2F;)[1];
+          const c5 &#x3D; value.match(&#x2F;Core 5.*?\+([\d\.]+)Â&#x2F;)[1];
+          const b0 &#x3D; value.match(&#x2F;temp1.*?\+([\d\.]+)?&#x2F;)[1];
+          const b1 &#x3D; value.match(&#x2F;temp2.*?\+([\d\.]+)?&#x2F;)[1];
+          return &#96;CPU: $&#123;p0&#125; ℃ || CPU1: $&#123;c0&#125; ℃ CPU2: $&#123;c1&#125; ℃ CPU3: $&#123;c2&#125; ℃ CPU4: $&#123;c3&#125; ℃ CPU5: $&#123;c4&#125; ℃ CPU6: $&#123;c5&#125; ℃ || 主板1: $&#123;b0&#125; ℃ 主板2: $&#123;b1&#125; ℃&#96;
+        &#125;
+&#125;,<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>结果如图：</p>
+<p><img src= "/img/loading.avif" data-lazy-src="https://raw.githubusercontent.com/xiangfeidexiaohuo/ProxmoxVE-7.0-DIY/master/pic/5.jpg" alt="jpg"></p>
+<ul>
+<li><p>红框内就是单独每个核心或者每个主板温度</p>
+</li>
+<li><p>前面的CPU温度是综合温度，后面的CPU1~6是每个核心单独温度</p>
+</li>
+<li><p>可根据实际情况增减CPU温度或者主板温度</p>
+</li>
+<li><p>其实如果核心超过4个，不建议把每个核心温度写出来，不美观</p>
+</li>
+</ul>
+<h4 id="6-改完执行-systemctl-restart-pveproxy-重进PVE主页，就看到温度显示了。"><a href="#6-改完执行-systemctl-restart-pveproxy-重进PVE主页，就看到温度显示了。" class="headerlink" title="6.改完执行 systemctl restart pveproxy 重进PVE主页，就看到温度显示了。"></a>6.改完执行 <code>systemctl restart pveproxy</code> 重进PVE主页，就看到温度显示了。</h4><p><img src= "/img/loading.avif" data-lazy-src="https://raw.githubusercontent.com/xiangfeidexiaohuo/ProxmoxVE-7.0-DIY/master/pic/6.jpg" alt="jpg"></p>
+</details>
+
+
+<hr>
+<h3 id="Proxmox-VE-主界面显示-PCI-E盘位-硬盘温度"><a href="#Proxmox-VE-主界面显示-PCI-E盘位-硬盘温度" class="headerlink" title="Proxmox VE 主界面显示(PCI-E盘位)硬盘温度"></a>Proxmox VE 主界面显示(PCI-E盘位)硬盘温度</h3><p><strong>承接上一个显示CPU温度教程。</strong></p>
+<ul>
+<li><p>此教程主要针对PCI-E盘位硬盘(也就是M.2固态)，SATA盘位硬盘显示温度教程在下方。</p>
+</li>
+<li><p>此教程是在上个“Proxmox VE 主界面显示CPU温度”基础上来做。</p>
+</li>
+</ul>
+<details>
+<summary>点击展开，查看详细教程！</summary>
+
+<h4 id="扩展下，主界面添加M-2固态硬盘温度："><a href="#扩展下，主界面添加M-2固态硬盘温度：" class="headerlink" title="* 扩展下，主界面添加M.2固态硬盘温度："></a>* 扩展下，主界面添加M.2固态硬盘温度：</h4><h4 id="1-已经完成“Proxmox-VE-主界面显示CPU温度”，然后终端执行：sensors"><a href="#1-已经完成“Proxmox-VE-主界面显示CPU温度”，然后终端执行：sensors" class="headerlink" title="1.已经完成“Proxmox VE 主界面显示CPU温度”，然后终端执行：sensors"></a>1.已经完成“Proxmox VE 主界面显示CPU温度”，然后终端执行：<code>sensors</code></h4><p><img src= "/img/loading.avif" data-lazy-src="https://raw.githubusercontent.com/xiangfeidexiaohuo/ProxmoxVE-7.0-DIY/master/pic/34.jpg" alt="jpg"></p>
+<ul>
+<li>nvme-pci-0100此处就是M.2固态温度</li>
+</ul>
+<h4 id="2-修改这个文件：-usr-share-pve-manager-js-pvemanagerlib-js"><a href="#2-修改这个文件：-usr-share-pve-manager-js-pvemanagerlib-js" class="headerlink" title="2.修改这个文件：&#x2F;usr&#x2F;share&#x2F;pve-manager&#x2F;js&#x2F;pvemanagerlib.js"></a>2.修改这个文件：&#x2F;usr&#x2F;share&#x2F;pve-manager&#x2F;js&#x2F;pvemanagerlib.js</h4><p>在上个教程改CPU温度的定义里，加入下图红框内的内容：</p>
+<p><code>const nvme0 = value.match(/Composite.*?\+([\d\.]+)Â/)[1];</code></p>
+<p><code>|| 固态: $&#123;nvme0&#125; ℃ </code></p>
+<p><img src= "/img/loading.avif" data-lazy-src="https://raw.githubusercontent.com/xiangfeidexiaohuo/ProxmoxVE-7.0-DIY/master/pic/35.jpg" alt="jpg"></p>
+<h4 id="3-改完保存执行systemctl-restart-pveproxy重进PVE主页。"><a href="#3-改完保存执行systemctl-restart-pveproxy重进PVE主页。" class="headerlink" title="3.改完保存执行systemctl restart pveproxy重进PVE主页。"></a>3.改完保存执行<code>systemctl restart pveproxy</code>重进PVE主页。</h4><p><img src= "/img/loading.avif" data-lazy-src="https://raw.githubusercontent.com/xiangfeidexiaohuo/ProxmoxVE-7.0-DIY/master/pic/36.jpg" alt="jpg"></p>
+</details>
+
+
+
+<hr>
+<h3 id="Proxmox-VE-主界面显示CPU频率"><a href="#Proxmox-VE-主界面显示CPU频率" class="headerlink" title="Proxmox VE 主界面显示CPU频率"></a>Proxmox VE 主界面显示CPU频率</h3><p><strong>承接上一个显示CPU温度教程。</strong></p>
+<details>
+<summary>点击展开，查看详细教程！</summary>
+
+<h4 id="扩展下，主界面添加CPU频率："><a href="#扩展下，主界面添加CPU频率：" class="headerlink" title="* 扩展下，主界面添加CPU频率："></a>* 扩展下，主界面添加CPU频率：</h4><h4 id="1-也是修改-usr-share-perl5-PVE-API2-Nodes-pm-和-usr-share-pve-manager-js-pvemanagerlib-js-这2个文件"><a href="#1-也是修改-usr-share-perl5-PVE-API2-Nodes-pm-和-usr-share-pve-manager-js-pvemanagerlib-js-这2个文件" class="headerlink" title="1.也是修改 &#x2F;usr&#x2F;share&#x2F;perl5&#x2F;PVE&#x2F;API2&#x2F;Nodes.pm 和 &#x2F;usr&#x2F;share&#x2F;pve-manager&#x2F;js&#x2F;pvemanagerlib.js 这2个文件"></a>1.也是修改 &#x2F;usr&#x2F;share&#x2F;perl5&#x2F;PVE&#x2F;API2&#x2F;Nodes.pm 和 &#x2F;usr&#x2F;share&#x2F;pve-manager&#x2F;js&#x2F;pvemanagerlib.js 这2个文件</h4><ul>
+<li>&#x2F;usr&#x2F;share&#x2F;perl5&#x2F;PVE&#x2F;API2&#x2F;Nodes.pm 刚刚修改CPU温度那里添加：</li>
+</ul>
+<pre class="line-numbers language-none"><code class="language-none">$res-&gt;&#123;cpusensors&#125; &#x3D; &#96;lscpu | grep MHz&#96;;<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+<p><img src= "/img/loading.avif" data-lazy-src="https://raw.githubusercontent.com/xiangfeidexiaohuo/ProxmoxVE-7.0-DIY/master/pic/25.jpg" alt="jpg"></p>
+<ul>
+<li>&#x2F;usr&#x2F;share&#x2F;pve-manager&#x2F;js&#x2F;pvemanagerlib.js 刚刚修改温度的下一行添加：</li>
+</ul>
+<pre class="line-numbers language-none"><code class="language-none">&#123;
+         itemId: &#39;MHz&#39;,
+         colspan: 2,
+         printBar: false,
+         title: gettext(&#39;CPU频率&#39;),
+         textField: &#39;cpusensors&#39;,
+         renderer:function(value)&#123;
+		  const f0 &#x3D; value.match(&#x2F;CPU MHz.*?([\d]+)&#x2F;)[1];
+		  const f1 &#x3D; value.match(&#x2F;CPU min MHz.*?([\d]+)&#x2F;)[1];
+		  const f2 &#x3D; value.match(&#x2F;CPU max MHz.*?([\d]+)&#x2F;)[1];
+		  return &#96;实时: $&#123;f0&#125; MHz | 最小: $&#123;f1&#125; MHz | 最大: $&#123;f2&#125; MHz &#96;
+           &#125;
+&#125;,<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p><img src= "/img/loading.avif" data-lazy-src="https://raw.githubusercontent.com/xiangfeidexiaohuo/ProxmoxVE-7.0-DIY/master/pic/26.jpg" alt="jpg"></p>
+<h4 id="2-改完执行-systemctl-restart-pveproxy-重进PVE主页，效果如图："><a href="#2-改完执行-systemctl-restart-pveproxy-重进PVE主页，效果如图：" class="headerlink" title="2.改完执行 systemctl restart pveproxy 重进PVE主页，效果如图："></a>2.改完执行 <code>systemctl restart pveproxy</code> 重进PVE主页，效果如图：</h4><p><img src= "/img/loading.avif" data-lazy-src="https://raw.githubusercontent.com/xiangfeidexiaohuo/ProxmoxVE-7.0-DIY/master/pic/27.jpg" alt="jpg"></p>
+</details>
+
+
+<hr>
+<h3 id="Proxmox-VE-主界面显示-SATA盘位-硬盘温度"><a href="#Proxmox-VE-主界面显示-SATA盘位-硬盘温度" class="headerlink" title="Proxmox VE 主界面显示(SATA盘位)硬盘温度"></a>Proxmox VE 主界面显示(SATA盘位)硬盘温度</h3><p><strong>同样承接上一个显示CPU温度教程。</strong></p>
+<ul>
+<li>此教程主要针对SATA盘位硬盘。</li>
+</ul>
+<details>
+<summary>点击展开，查看详细教程！</summary>
+
+<h4 id="扩展下，主界面添加硬盘温度："><a href="#扩展下，主界面添加硬盘温度：" class="headerlink" title="* 扩展下，主界面添加硬盘温度："></a>* 扩展下，主界面添加硬盘温度：</h4><h4 id="1-登录PVE的SSH，执行命令安装hddtemp："><a href="#1-登录PVE的SSH，执行命令安装hddtemp：" class="headerlink" title="1.登录PVE的SSH，执行命令安装hddtemp："></a>1.登录PVE的SSH，执行命令安装hddtemp：</h4><pre class="line-numbers language-none"><code class="language-none">apt-get install hddtemp<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+<ul>
+<li><p>然后执行 <code>chmod +s /usr/sbin/hddtemp</code></p>
+</li>
+<li><p>执行 <code>hddtemp /dev/sd?</code> 就能看到硬盘温度：</p>
+</li>
+</ul>
+<p><img src= "/img/loading.avif" data-lazy-src="https://raw.githubusercontent.com/xiangfeidexiaohuo/ProxmoxVE-7.0-DIY/master/pic/33.jpg" alt="jpg"></p>
+<h4 id="2-然后修改-usr-share-perl5-PVE-API2-Nodes-pm-和-usr-share-pve-manager-js-pvemanagerlib-js-这2个文件"><a href="#2-然后修改-usr-share-perl5-PVE-API2-Nodes-pm-和-usr-share-pve-manager-js-pvemanagerlib-js-这2个文件" class="headerlink" title="2.然后修改 &#x2F;usr&#x2F;share&#x2F;perl5&#x2F;PVE&#x2F;API2&#x2F;Nodes.pm 和 &#x2F;usr&#x2F;share&#x2F;pve-manager&#x2F;js&#x2F;pvemanagerlib.js 这2个文件"></a>2.然后修改 &#x2F;usr&#x2F;share&#x2F;perl5&#x2F;PVE&#x2F;API2&#x2F;Nodes.pm 和 &#x2F;usr&#x2F;share&#x2F;pve-manager&#x2F;js&#x2F;pvemanagerlib.js 这2个文件</h4><ul>
+<li>&#x2F;usr&#x2F;share&#x2F;perl5&#x2F;PVE&#x2F;API2&#x2F;Nodes.pm 刚刚修改CPU温度那里添加：</li>
+</ul>
+<pre class="line-numbers language-none"><code class="language-none">$res-&gt;&#123;thermal_hdd&#125; &#x3D; &#96;hddtemp &#x2F;dev&#x2F;sd?&#96;;<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+<p><img src= "/img/loading.avif" data-lazy-src="https://raw.githubusercontent.com/xiangfeidexiaohuo/ProxmoxVE-7.0-DIY/master/pic/30.jpg" alt="jpg"></p>
+<ul>
+<li>&#x2F;usr&#x2F;share&#x2F;pve-manager&#x2F;js&#x2F;pvemanagerlib.js 刚刚修改CPU温度的下一行添加：</li>
+</ul>
+<pre class="line-numbers language-none"><code class="language-none">&#123;
+           itemId: &#39;thermal-hdd&#39;,
+           colspan: 2,
+           printBar: false,
+           title: gettext(&#39;硬盘温度&#39;),
+           textField: &#39;thermal_hdd&#39;,
+           renderer: function(value) &#123;
+               value &#x3D; value.replaceAll(&#39;Â&#39;, &#39;&#39;);
+               return value.replaceAll(&#39;\n&#39;, &#39;&lt;br&gt;&#39;);
+           &#125;
+&#125;,<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p><img src= "/img/loading.avif" data-lazy-src="https://raw.githubusercontent.com/xiangfeidexiaohuo/ProxmoxVE-7.0-DIY/master/pic/31.jpg" alt="jpg"></p>
+<h4 id="3-改完执行-systemctl-restart-pveproxy-重进PVE主页，效果如图："><a href="#3-改完执行-systemctl-restart-pveproxy-重进PVE主页，效果如图：" class="headerlink" title="3.改完执行 systemctl restart pveproxy 重进PVE主页，效果如图："></a>3.改完执行 <code>systemctl restart pveproxy</code> 重进PVE主页，效果如图：</h4><p><img src= "/img/loading.avif" data-lazy-src="https://raw.githubusercontent.com/xiangfeidexiaohuo/ProxmoxVE-7.0-DIY/master/pic/32.jpg" alt="jpg"></p>
+</details>
+
+
+
+<hr>
+<h3 id="Proxmox-VE-主界面显示温度的另一种方案-JSON格式"><a href="#Proxmox-VE-主界面显示温度的另一种方案-JSON格式" class="headerlink" title="Proxmox VE 主界面显示温度的另一种方案: JSON格式"></a>Proxmox VE 主界面显示温度的另一种方案: JSON格式</h3><ul>
+<li><p>因为常规的方案有些局限，但是吧，我又不想推翻整个“温度”相关的教程，所以单独说下。</p>
+</li>
+<li><p>自己本身没插nvme固态，所以呢，我就以普通的CPU温度为例，道理是一样的。</p>
+</li>
+<li><p>适合多个nvme固态等同参数的获取温度，如果不懂是啥，此教程就忽略。</p>
+</li>
+</ul>
+<details>
+<summary>点击展开，查看详细教程！</summary>
+
+<h4 id="比如多个nvme固态显示温度，看如下图："><a href="#比如多个nvme固态显示温度，看如下图：" class="headerlink" title="* 比如多个nvme固态显示温度，看如下图："></a>* 比如多个nvme固态显示温度，看如下图：</h4><p><img src= "/img/loading.avif" data-lazy-src="https://raw.githubusercontent.com/xiangfeidexiaohuo/ProxmoxVE-7.0-DIY/master/pic/44.jpg" alt="jpg"></p>
+<p>可以看到两块nvme固态的温度读取值都是Composite，但是确实有2个固态，用之前常规的方案，就无法显示2个nvme固态的温度，所以需要另外的方案。</p>
+<h4 id="1-常理还是必须安装sensors："><a href="#1-常理还是必须安装sensors：" class="headerlink" title="1.常理还是必须安装sensors："></a>1.常理还是必须安装sensors：</h4><pre class="line-numbers language-none"><code class="language-none">apt-get install lm-sensors<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+<h4 id="2-然后终端执行sensors-j"><a href="#2-然后终端执行sensors-j" class="headerlink" title="2.然后终端执行sensors -j"></a>2.然后终端执行<code>sensors -j</code></h4><p><img src= "/img/loading.avif" data-lazy-src="https://raw.githubusercontent.com/xiangfeidexiaohuo/ProxmoxVE-7.0-DIY/master/pic/45.jpg" alt="jpg"></p>
+<p>coretemp-isa-0000 CPU传感器</p>
+<p>temp1_input&#x2F;temp2_input&#x2F;temp3_input等就是核心温度</p>
+<h4 id="3-也是修改：-usr-share-perl5-PVE-API2-Nodes-pm-同样的位置："><a href="#3-也是修改：-usr-share-perl5-PVE-API2-Nodes-pm-同样的位置：" class="headerlink" title="3.也是修改：&#x2F;usr&#x2F;share&#x2F;perl5&#x2F;PVE&#x2F;API2&#x2F;Nodes.pm 同样的位置："></a>3.也是修改：&#x2F;usr&#x2F;share&#x2F;perl5&#x2F;PVE&#x2F;API2&#x2F;Nodes.pm 同样的位置：</h4><pre class="line-numbers language-none"><code class="language-none">$res-&gt;&#123;sensinfo&#125; &#x3D; &#96;sensors -j&#96;;<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+<p><img src= "/img/loading.avif" data-lazy-src="https://raw.githubusercontent.com/xiangfeidexiaohuo/ProxmoxVE-7.0-DIY/master/pic/46.jpg" alt="jpg"></p>
+<h4 id="4-也是修改这个文件：-usr-share-pve-manager-js-pvemanagerlib-js-同样的位置："><a href="#4-也是修改这个文件：-usr-share-pve-manager-js-pvemanagerlib-js-同样的位置：" class="headerlink" title="4.也是修改这个文件：&#x2F;usr&#x2F;share&#x2F;pve-manager&#x2F;js&#x2F;pvemanagerlib.js 同样的位置："></a>4.也是修改这个文件：&#x2F;usr&#x2F;share&#x2F;pve-manager&#x2F;js&#x2F;pvemanagerlib.js 同样的位置：</h4><pre class="line-numbers language-none"><code class="language-none">&#123;
+         itemId: &#39;sensinfo&#39;,
+         colspan: 2,
+         printBar: false,
+         title: gettext(&#39;温度&#39;),
+         textField: &#39;sensinfo&#39;,
+         renderer:function(value)&#123;
+		  value &#x3D; JSON.parse(value.replaceAll(&#39;Â&#39;, &#39;&#39;));
+		  const c0 &#x3D; value[&#39;coretemp-isa-0000&#39;][&#39;Core 0&#39;][&#39;temp2_input&#39;].toFixed(1);
+		  const c1 &#x3D; value[&#39;coretemp-isa-0000&#39;][&#39;Core 1&#39;][&#39;temp3_input&#39;].toFixed(1);
+		  const c2 &#x3D; value[&#39;coretemp-isa-0000&#39;][&#39;Core 2&#39;][&#39;temp4_input&#39;].toFixed(1);
+		  const c3 &#x3D; value[&#39;coretemp-isa-0000&#39;][&#39;Core 3&#39;][&#39;temp5_input&#39;].toFixed(1);			  
+		  return &#96;CPU温度: $&#123;c0&#125;℃ | $&#123;c1&#125;℃ | $&#123;c2&#125;℃ | $&#123;c3&#125;℃ &#96;; 
+           &#125;
+   &#125;,<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p><img src= "/img/loading.avif" data-lazy-src="https://raw.githubusercontent.com/xiangfeidexiaohuo/ProxmoxVE-7.0-DIY/master/pic/47.jpg" alt="jpg"></p>
+<ul>
+<li><p>coretemp-isa-0000 CPU传感器</p>
+</li>
+<li><p>Core 0 到 Core 3 就是CPU核心1~4</p>
+</li>
+<li><p>temp2_input 到 temp5_input CPU核心1~4的温度</p>
+</li>
+<li><p>如果有别的传感器温度，比如nvme固态，依葫芦画瓢更改内容。</p>
+</li>
+</ul>
+<h4 id="5-如果用这种方案改写了CPU温度，之前的常规CPU方案代码可以去掉，自行理解，这个教程我写的比较简单。"><a href="#5-如果用这种方案改写了CPU温度，之前的常规CPU方案代码可以去掉，自行理解，这个教程我写的比较简单。" class="headerlink" title="5.如果用这种方案改写了CPU温度，之前的常规CPU方案代码可以去掉，自行理解，这个教程我写的比较简单。"></a>5.如果用这种方案改写了CPU温度，之前的常规CPU方案代码可以去掉，自行理解，这个教程我写的比较简单。</h4><h4 id="6-改完保存执行systemctl-restart-pveproxy重进PVE主页。"><a href="#6-改完保存执行systemctl-restart-pveproxy重进PVE主页。" class="headerlink" title="6.改完保存执行systemctl restart pveproxy重进PVE主页。"></a>6.改完保存执行<code>systemctl restart pveproxy</code>重进PVE主页。</h4></details>
+
+
+
+<hr>
+<h3 id="Proxmox-VE-改显示范围"><a href="#Proxmox-VE-改显示范围" class="headerlink" title="Proxmox VE 改显示范围"></a>Proxmox VE 改显示范围</h3><p><strong>如果发现改上面的温度&#x2F;CPU频率&#x2F;硬盘温度，步骤又没错，但是主界面不显示，就需要下列教程。</strong></p>
+<details>
+<summary>点击展开，查看详细教程！</summary>
+
+<h4 id="改布局："><a href="#改布局：" class="headerlink" title="改布局："></a>改布局：</h4><ul>
+<li>还是这个文件：pvemanagerlib.js，搜索：<code>widget.pveNodeStatus</code></li>
+</ul>
+<p><img src= "/img/loading.avif" data-lazy-src="https://raw.githubusercontent.com/xiangfeidexiaohuo/ProxmoxVE-7.0-DIY/master/pic/29.jpg" alt="jpg"></p>
+<p>将 height: 300 改大为400，或者更大，然后保存。</p>
+<ul>
+<li>搜索：<code>gettext(&#39;Status&#39;) + &#39;: &#39; + zpool</code> (这一处不一定有，搜不到，就不用管了。)</li>
+</ul>
+<p><img src= "/img/loading.avif" data-lazy-src="https://raw.githubusercontent.com/xiangfeidexiaohuo/ProxmoxVE-7.0-DIY/master/pic/28.jpg" alt="jpg"></p>
+<p>将 height: 600 改大为700，或者更大，然后保存。</p>
+</details>
+
+
+
+<hr>
+<h3 id="核显直通-intel"><a href="#核显直通-intel" class="headerlink" title="核显直通(intel)"></a>核显直通(intel)</h3><details>
+<summary>点击展开，查看详细教程！</summary>
+
+<h4 id="1-编辑GRUB配置文件：-etc-default-grub"><a href="#1-编辑GRUB配置文件：-etc-default-grub" class="headerlink" title="1.编辑GRUB配置文件：&#x2F;etc&#x2F;default&#x2F;grub"></a>1.编辑GRUB配置文件：&#x2F;etc&#x2F;default&#x2F;grub</h4><pre class="line-numbers language-none"><code class="language-none">sed -i &quot;s&#x2F;quiet&#x2F;quiet intel_iommu&#x3D;on iommu&#x3D;pt video&#x3D;efifb:off,vesafb:off&#x2F;g&quot; &#x2F;etc&#x2F;default&#x2F;grub<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+<p>改好结果：</p>
+<p><img src= "/img/loading.avif" data-lazy-src="https://raw.githubusercontent.com/xiangfeidexiaohuo/ProxmoxVE-7.0-DIY/master/pic/7.jpg" alt="jpg"></p>
+<p>然后执行：</p>
+<pre class="line-numbers language-none"><code class="language-none">update-grub<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+<h4 id="2-添加所需的系统模块-驱动-：-etc-modules"><a href="#2-添加所需的系统模块-驱动-：-etc-modules" class="headerlink" title="2.添加所需的系统模块(驱动)：&#x2F;etc&#x2F;modules"></a>2.添加所需的系统模块(驱动)：&#x2F;etc&#x2F;modules</h4><pre class="line-numbers language-none"><code class="language-none">echo &quot;vfio&quot; &gt;&gt; &#x2F;etc&#x2F;modules
+
+echo &quot;vfio_iommu_type1&quot; &gt;&gt; &#x2F;etc&#x2F;modules
+
+echo &quot;vfio_pci&quot; &gt;&gt; &#x2F;etc&#x2F;modules
+
+echo &quot;vfio_virqfd&quot; &gt;&gt; &#x2F;etc&#x2F;modules<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>改好结果：</p>
+<p><img src= "/img/loading.avif" data-lazy-src="https://raw.githubusercontent.com/xiangfeidexiaohuo/ProxmoxVE-7.0-DIY/master/pic/8.jpg" alt="jpg"></p>
+<ul>
+<li><h4 id="PVE7-x-直接跳过3、4、5，直接到第6步即可；PVE6-x就一步步看。"><a href="#PVE7-x-直接跳过3、4、5，直接到第6步即可；PVE6-x就一步步看。" class="headerlink" title="PVE7.x 直接跳过3、4、5，直接到第6步即可；PVE6.x就一步步看。"></a>PVE7.x 直接跳过3、4、5，直接到第6步即可；PVE6.x就一步步看。</h4></li>
+</ul>
+<h4 id="3-添加模块-驱动-黑名单：-etc-modprobe-d-pve-blacklist-conf"><a href="#3-添加模块-驱动-黑名单：-etc-modprobe-d-pve-blacklist-conf" class="headerlink" title="3.添加模块(驱动)黑名单：&#x2F;etc&#x2F;modprobe.d&#x2F;pve-blacklist.conf"></a>3.添加模块(驱动)黑名单：&#x2F;etc&#x2F;modprobe.d&#x2F;pve-blacklist.conf</h4><pre class="line-numbers language-none"><code class="language-none">echo &quot;blacklist snd_hda_intel&quot; &gt;&gt; &#x2F;etc&#x2F;modprobe.d&#x2F;pve-blacklist.conf
+
+echo &quot;blacklist snd_hda_codec_hdmi&quot; &gt;&gt; &#x2F;etc&#x2F;modprobe.d&#x2F;pve-blacklist.conf
+
+echo &quot;blacklist i915&quot; &gt;&gt; &#x2F;etc&#x2F;modprobe.d&#x2F;pve-blacklist.conf<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>改好结果：</p>
+<p><img src= "/img/loading.avif" data-lazy-src="https://raw.githubusercontent.com/xiangfeidexiaohuo/ProxmoxVE-7.0-DIY/master/pic/9.jpg" alt="jpg"></p>
+<h4 id="4-查看GPU的ID："><a href="#4-查看GPU的ID：" class="headerlink" title="4.查看GPU的ID："></a>4.查看GPU的ID：</h4><pre class="line-numbers language-none"><code class="language-none">lspci -nn | grep VGA<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+<p>比如我的：</p>
+<pre class="line-numbers language-none"><code class="language-none">00:02.0 VGA compatible controller [0300]: Intel Corporation HD Graphics [8086:1606] (rev 08)<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+<p><img src= "/img/loading.avif" data-lazy-src="https://raw.githubusercontent.com/xiangfeidexiaohuo/ProxmoxVE-7.0-DIY/master/pic/10.jpg" alt="jpg"></p>
+<ul>
+<li><p>8086:1606 就是核显的ID</p>
+</li>
+<li><p>00:02.0 是核显的编号</p>
+</li>
+</ul>
+<p>接着执行：(ids&#x3D;xxxx:xxxx，xxxx:xxxx替换成你获取的ID)</p>
+<pre class="line-numbers language-none"><code class="language-none">echo &quot;options vfio-pci ids&#x3D;8086:1606&quot; &gt;&gt; &#x2F;etc&#x2F;modprobe.d&#x2F;vfio.conf<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+<h4 id="5-如果要音频直通，就搜索音频设备的ID"><a href="#5-如果要音频直通，就搜索音频设备的ID" class="headerlink" title="5.如果要音频直通，就搜索音频设备的ID"></a>5.如果要音频直通，就搜索音频设备的ID</h4><pre class="line-numbers language-none"><code class="language-none">lspci -nn | grep Audio<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+<p>比如我的：</p>
+<pre class="line-numbers language-none"><code class="language-none">00:03.0 Audio device [0403]: Intel Corporation Broadwell-U Audio Controller [8086:160c] (rev 08)
+00:1b.0 Audio device [0403]: Intel Corporation Wildcat Point-LP High Definition Audio Controller [8086:9ca0] (rev 03)<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
+<p><img src= "/img/loading.avif" data-lazy-src="https://raw.githubusercontent.com/xiangfeidexiaohuo/ProxmoxVE-7.0-DIY/master/pic/11.jpg" alt="jpg"></p>
+<ul>
+<li><p>8086:160c&#x2F;8086:9ca0  就是音频设备ID (一个是板载，一个是单独的音频孔，所以是2个)</p>
+</li>
+<li><p>00:03.0&#x2F;00:1b.0 是音频设备编号</p>
+</li>
+</ul>
+<p>接着执行：(ids&#x3D;xxxx:xxxx，xxxx:xxxx替换成你获取的GPU&#x2F;音频设备ID，用英文逗号隔开)</p>
+<pre class="line-numbers language-none"><code class="language-none">echo &quot;options vfio-pci ids&#x3D;8086:1606,8086:160c,8086:9ca0&quot; &gt;&gt; &#x2F;etc&#x2F;modprobe.d&#x2F;vfio.conf<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+<h4 id="6-更新内核并重启："><a href="#6-更新内核并重启：" class="headerlink" title="6.更新内核并重启："></a>6.更新内核并重启：</h4><p>执行：</p>
+<pre class="line-numbers language-none"><code class="language-none">update-initramfs -u
+
+reboot<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span></span></code></pre>
+
+<h4 id="7-验证是否开启iommu："><a href="#7-验证是否开启iommu：" class="headerlink" title="7.验证是否开启iommu："></a>7.验证是否开启iommu：</h4><p>终端输入：</p>
+<pre class="line-numbers language-none"><code class="language-none">dmesg | grep &#39;remapping&#39;<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+<p>要出现：DMAR-IR: Enabled IRQ remapping in x2apic mode</p>
+<p>接着用下面的命令：</p>
+<pre class="line-numbers language-none"><code class="language-none">find &#x2F;sys&#x2F;kernel&#x2F;iommu_groups&#x2F; -type l  <span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+<p>出现很多数据，每一行最后的xx:xx.x是设备编号，查看要直通的设备的编号是否在里面。</p>
+<h4 id="8-添加PCI设备即可：-我只添加核显，音频设备看设备编号按需添加"><a href="#8-添加PCI设备即可：-我只添加核显，音频设备看设备编号按需添加" class="headerlink" title="8.添加PCI设备即可：(我只添加核显，音频设备看设备编号按需添加)"></a>8.添加PCI设备即可：(我只添加核显，音频设备看设备编号按需添加)</h4><p><img src= "/img/loading.avif" data-lazy-src="https://raw.githubusercontent.com/xiangfeidexiaohuo/ProxmoxVE-7.0-DIY/master/pic/12.jpg" alt="jpg"></p>
+<p><img src= "/img/loading.avif" data-lazy-src="https://raw.githubusercontent.com/xiangfeidexiaohuo/ProxmoxVE-7.0-DIY/master/pic/13.jpg" alt="jpg"></p>
+<h4 id="9-验证核显直通成功没？"><a href="#9-验证核显直通成功没？" class="headerlink" title="9.验证核显直通成功没？"></a>9.验证核显直通成功没？</h4><ul>
+<li>在直通后的系统的终端执行：<pre class="line-numbers language-none"><code class="language-none">ls &#x2F;dev&#x2F;dri<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre></li>
+<li>输出如图，出现“renderD128”就成功了：</li>
+</ul>
+<p><img src= "/img/loading.avif" data-lazy-src="https://raw.githubusercontent.com/xiangfeidexiaohuo/ProxmoxVE-7.0-DIY/master/pic/21.jpg" alt="jpg"></p>
+</details>
+
+
+<hr>
+<h3 id="黑群晖7-x人脸识别-DS918"><a href="#黑群晖7-x人脸识别-DS918" class="headerlink" title="黑群晖7.x人脸识别(DS918+)"></a>黑群晖7.x人脸识别(DS918+)</h3><details>
+<summary>点击展开，查看详细教程！</summary>
+
+<h4 id="1-已经按照上面的步骤，核显直通黑裙7；"><a href="#1-已经按照上面的步骤，核显直通黑裙7；" class="headerlink" title="1.已经按照上面的步骤，核显直通黑裙7；"></a>1.已经按照上面的步骤，核显直通黑裙7；</h4><h4 id="2-编辑”-etc-pve-qemu-server-102-conf”文件："><a href="#2-编辑”-etc-pve-qemu-server-102-conf”文件：" class="headerlink" title="2.编辑”&#x2F;etc&#x2F;pve&#x2F;qemu-server&#x2F;102.conf”文件："></a>2.编辑”&#x2F;etc&#x2F;pve&#x2F;qemu-server&#x2F;102.conf”文件：</h4><ul>
+<li>为啥是102.conf，因为演示的黑裙7的虚拟机ID是102，根据你自己的来。</li>
+</ul>
+<p>显卡hostpci0: 这一行的最后，添加：</p>
+<pre class="line-numbers language-none"><code class="language-none">,legacy-igd&#x3D;1<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+<p><img src= "/img/loading.avif" data-lazy-src="https://raw.githubusercontent.com/xiangfeidexiaohuo/ProxmoxVE-7.0-DIY/master/pic/22.jpg" alt="jpg"></p>
+<h4 id="3-回到PVE管理界面，更改黑裙7的硬件——显示为无，然后重启黑裙7。"><a href="#3-回到PVE管理界面，更改黑裙7的硬件——显示为无，然后重启黑裙7。" class="headerlink" title="3.回到PVE管理界面，更改黑裙7的硬件——显示为无，然后重启黑裙7。"></a>3.回到PVE管理界面，更改黑裙7的硬件——显示为无，然后重启黑裙7。</h4><p><img src= "/img/loading.avif" data-lazy-src="https://raw.githubusercontent.com/xiangfeidexiaohuo/ProxmoxVE-7.0-DIY/master/pic/23.jpg" alt="jpg"></p>
+<h4 id="4-然后等待Photos索引，就能看到人脸已经识别了。"><a href="#4-然后等待Photos索引，就能看到人脸已经识别了。" class="headerlink" title="4.然后等待Photos索引，就能看到人脸已经识别了。"></a>4.然后等待Photos索引，就能看到人脸已经识别了。</h4><p><img src= "/img/loading.avif" data-lazy-src="https://raw.githubusercontent.com/xiangfeidexiaohuo/ProxmoxVE-7.0-DIY/master/pic/24.jpg" alt="jpg"></p>
+</details>
+
+
+
+<hr>
+<h3 id="GVT-G直通-intel"><a href="#GVT-G直通-intel" class="headerlink" title="GVT-G直通(intel)"></a>GVT-G直通(intel)</h3><p><strong>此方式适合桌面级别的U(差不多5代起步)，小主机(J4125&#x2F;N5105等)不支持！！！</strong></p>
+<ul>
+<li><p>这种直通和上面的直通方法，二选一，不能同时选2种！！！</p>
+</li>
+<li><p>好处是显卡拆成好多个分别给不同虚拟机使用。</p>
+</li>
+</ul>
+<details>
+<summary>点击展开，查看详细教程！</summary>
+
+<h4 id="1-首先在主板BIOS里面启用GTD，GTX等选项，若有aperture-size选项，建议512M，没有就不管吧；"><a href="#1-首先在主板BIOS里面启用GTD，GTX等选项，若有aperture-size选项，建议512M，没有就不管吧；" class="headerlink" title="1.首先在主板BIOS里面启用GTD，GTX等选项，若有aperture size选项，建议512M，没有就不管吧；"></a>1.首先在主板BIOS里面启用GTD，GTX等选项，若有aperture size选项，建议512M，没有就不管吧；</h4><h4 id="2-编辑GRUB配置文件：-etc-default-grub"><a href="#2-编辑GRUB配置文件：-etc-default-grub" class="headerlink" title="2.编辑GRUB配置文件：&#x2F;etc&#x2F;default&#x2F;grub"></a>2.编辑GRUB配置文件：&#x2F;etc&#x2F;default&#x2F;grub</h4><pre class="line-numbers language-none"><code class="language-none">sed -i &quot;s&#x2F;quiet&#x2F;quiet intel_iommu&#x3D;on i915.enable_gvt&#x3D;1&#x2F;g&quot; &#x2F;etc&#x2F;default&#x2F;grub<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+<p>然后执行：</p>
+<pre class="line-numbers language-none"><code class="language-none">update-grub<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+<h4 id="3-添加所需的系统模块-驱动-：-etc-modules"><a href="#3-添加所需的系统模块-驱动-：-etc-modules" class="headerlink" title="3.添加所需的系统模块(驱动)：&#x2F;etc&#x2F;modules"></a>3.添加所需的系统模块(驱动)：&#x2F;etc&#x2F;modules</h4><pre class="line-numbers language-none"><code class="language-none">echo &quot;vfio&quot; &gt;&gt; &#x2F;etc&#x2F;modules
+
+echo &quot;vfio_iommu_type1&quot; &gt;&gt; &#x2F;etc&#x2F;modules
+
+echo &quot;vfio_pci&quot; &gt;&gt; &#x2F;etc&#x2F;modules
+
+echo &quot;vfio_virqfd&quot; &gt;&gt; &#x2F;etc&#x2F;modules
+
+echo &quot;kvmgt&quot; &gt;&gt; &#x2F;etc&#x2F;modules<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<h4 id="4-更新内核并重启："><a href="#4-更新内核并重启：" class="headerlink" title="4.更新内核并重启："></a>4.更新内核并重启：</h4><p>执行：</p>
+<pre class="line-numbers language-none"><code class="language-none">update-initramfs -u
+
+reboot<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span></span></code></pre>
+
+<h4 id="5-验证是否开启GVT："><a href="#5-验证是否开启GVT：" class="headerlink" title="5.验证是否开启GVT："></a>5.验证是否开启GVT：</h4><p>0000:00:02.0  将00:02.0换成自己的GPU的编号 (lspci -nn | grep VGA 查看，最前面的就是)</p>
+<pre class="line-numbers language-none"><code class="language-none">ls &#x2F;sys&#x2F;bus&#x2F;pci&#x2F;devices&#x2F;0000:00:02.0&#x2F;mdev_supported_types&#x2F;<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+<p>出现如下即为成功(教程机核显为UHD630)：</p>
+<p>i915-GVTg_V5_4 i915-GVTg_V5_8</p>
+<h4 id="6-配置直通："><a href="#6-配置直通：" class="headerlink" title="6.配置直通："></a>6.配置直通：</h4><p>cpu类型设置成HOST，将机器设置成q35，将虚拟机显卡设置成无，添加PCIE设备：勾选高级里的ROM-Bar和PCI-E，主GPU不勾选，MDev类型选择合适”显卡”。</p>
+<p><img src= "/img/loading.avif" data-lazy-src="https://raw.githubusercontent.com/xiangfeidexiaohuo/ProxmoxVE-7.0-DIY/master/pic/20.jpg" alt="jpg"></p>
+<ul>
+<li>“可用”显示的多少，就可以添加多个“显卡”。</li>
+</ul>
+<p>比如上图就是说：只能添加1个v5_4的“显卡”或者添加2个v5_8的“显卡”，只能用一种类型的显卡。</p>
+</details>
+
+
+<hr>
+<h3 id="GVT-G改显存，增加”显卡”"><a href="#GVT-G改显存，增加”显卡”" class="headerlink" title="GVT-G改显存，增加”显卡”"></a>GVT-G改显存，增加”显卡”</h3><p><strong>承接上一个GVT-G直通教程。</strong></p>
+<p><strong>此教程有风险，请知悉，若操作，请自行承担风险。</strong></p>
+<details>
+<summary>点击展开，查看详细教程！</summary>
+
+<h4 id="为了分配更多显卡，需给核显分配更多显存。但一般主板的BIOS并没有给调节显存的选项”aperture-size”，只给了类似DVMT-共享显存-选项，最大1024MB，当把DVMT改成1024MB后，并没有用。所以本教程强行改aperture-size。"><a href="#为了分配更多显卡，需给核显分配更多显存。但一般主板的BIOS并没有给调节显存的选项”aperture-size”，只给了类似DVMT-共享显存-选项，最大1024MB，当把DVMT改成1024MB后，并没有用。所以本教程强行改aperture-size。" class="headerlink" title="为了分配更多显卡，需给核显分配更多显存。但一般主板的BIOS并没有给调节显存的选项”aperture size”，只给了类似DVMT(共享显存)选项，最大1024MB，当把DVMT改成1024MB后，并没有用。所以本教程强行改aperture size。"></a>为了分配更多显卡，需给核显分配更多显存。但一般主板的BIOS并没有给调节显存的选项”aperture size”，只给了类似DVMT(共享显存)选项，最大1024MB，当把DVMT改成1024MB后，并没有用。所以本教程强行改aperture size。</h4><p>通过命令 <code>lspci -vs 00:02.0</code> 查看，一般默认是256M。</p>
+<p><img src= "/img/loading.avif" data-lazy-src="https://raw.githubusercontent.com/xiangfeidexiaohuo/ProxmoxVE-7.0-DIY/master/pic/gvt/1.jpg" alt="jpg"></p>
+<p>128M的显卡只有一个，所以需要改大到512M。</p>
+<p><img src= "/img/loading.avif" data-lazy-src="https://raw.githubusercontent.com/xiangfeidexiaohuo/ProxmoxVE-7.0-DIY/master/pic/20.jpg" alt="jpg"></p>
+<h4 id="1-自行去主板官网下载当前主板的BIOS-注意版本-，然后下载教程提供的工具包。"><a href="#1-自行去主板官网下载当前主板的BIOS-注意版本-，然后下载教程提供的工具包。" class="headerlink" title="1.自行去主板官网下载当前主板的BIOS(注意版本)，然后下载教程提供的工具包。"></a>1.自行去主板官网下载当前主板的BIOS(注意版本)，然后下载教程提供的工具包。</h4><p><a target="_blank" rel="noopener" href="https://raw.githubusercontent.com/xiangfeidexiaohuo/ProxmoxVE-7.0-DIY/master/%E6%94%B9GVT%E5%B7%A5%E5%85%B7%E5%8C%85.zip">工具包下载地址</a></p>
+<h4 id="2-使用工具包里的UEFITool0270工具，打开BIOS文件，提取模块；"><a href="#2-使用工具包里的UEFITool0270工具，打开BIOS文件，提取模块；" class="headerlink" title="2.使用工具包里的UEFITool0270工具，打开BIOS文件，提取模块；"></a>2.使用工具包里的UEFITool0270工具，打开BIOS文件，提取模块；</h4><p><img src= "/img/loading.avif" data-lazy-src="https://raw.githubusercontent.com/xiangfeidexiaohuo/ProxmoxVE-7.0-DIY/master/pic/gvt/2.jpg" alt="jpg"></p>
+<ul>
+<li>按Ctrl+F打开搜索页面，切换到text选项卡，搜索aperture size：</li>
+</ul>
+<p><img src= "/img/loading.avif" data-lazy-src="https://raw.githubusercontent.com/xiangfeidexiaohuo/ProxmoxVE-7.0-DIY/master/pic/gvt/3.jpg" alt="jpg"></p>
+<ul>
+<li>点击搜索出来的结果，会跳转到对应模块位置；</li>
+</ul>
+<p><img src= "/img/loading.avif" data-lazy-src="https://raw.githubusercontent.com/xiangfeidexiaohuo/ProxmoxVE-7.0-DIY/master/pic/gvt/4.jpg" alt="jpg"></p>
+<ul>
+<li>然后导出模块，并另存为。</li>
+</ul>
+<p><img src= "/img/loading.avif" data-lazy-src="https://raw.githubusercontent.com/xiangfeidexiaohuo/ProxmoxVE-7.0-DIY/master/pic/gvt/5.jpg" alt="jpg"></p>
+<p><img src= "/img/loading.avif" data-lazy-src="https://raw.githubusercontent.com/xiangfeidexiaohuo/ProxmoxVE-7.0-DIY/master/pic/gvt/6.jpg" alt="jpg"></p>
+<h4 id="3-使用工具包里的IRFExtractor-exe打开另存为的文件，找偏移量。"><a href="#3-使用工具包里的IRFExtractor-exe打开另存为的文件，找偏移量。" class="headerlink" title="3.使用工具包里的IRFExtractor.exe打开另存为的文件，找偏移量。"></a>3.使用工具包里的IRFExtractor.exe打开另存为的文件，找偏移量。</h4><ul>
+<li>打开，并解析出文本，另存为。</li>
+</ul>
+<p><img src= "/img/loading.avif" data-lazy-src="https://raw.githubusercontent.com/xiangfeidexiaohuo/ProxmoxVE-7.0-DIY/master/pic/gvt/7.jpg" alt="jpg"></p>
+<p><img src= "/img/loading.avif" data-lazy-src="https://raw.githubusercontent.com/xiangfeidexiaohuo/ProxmoxVE-7.0-DIY/master/pic/gvt/8.jpg" alt="jpg"></p>
+<ul>
+<li>打开解析文本，搜索aperture size，红框内的 <code>0x2E8</code> 就是我们要找的偏移量。每个主板的BIOS偏移量不一样。</li>
+</ul>
+<p><img src= "/img/loading.avif" data-lazy-src="https://raw.githubusercontent.com/xiangfeidexiaohuo/ProxmoxVE-7.0-DIY/master/pic/gvt/9.jpg" alt="jpg"></p>
+<ul>
+<li>通过图可以看出，默认是0x1，也就是256M。若要改512M，就得默认0x3，改1G，就得默认0x7。</li>
+</ul>
+<p><img src= "/img/loading.avif" data-lazy-src="https://raw.githubusercontent.com/xiangfeidexiaohuo/ProxmoxVE-7.0-DIY/master/pic/gvt/10.jpg" alt="jpg"></p>
+<h4 id="4-准备一个U盘，格式化为FAT32，然后把工具包内的EFI文件夹放U盘根目录，然后电脑重启进U盘引导。"><a href="#4-准备一个U盘，格式化为FAT32，然后把工具包内的EFI文件夹放U盘根目录，然后电脑重启进U盘引导。" class="headerlink" title="4.准备一个U盘，格式化为FAT32，然后把工具包内的EFI文件夹放U盘根目录，然后电脑重启进U盘引导。"></a>4.准备一个U盘，格式化为FAT32，然后把工具包内的EFI文件夹放U盘根目录，然后电脑重启进U盘引导。</h4><p><img src= "/img/loading.avif" data-lazy-src="https://raw.githubusercontent.com/xiangfeidexiaohuo/ProxmoxVE-7.0-DIY/master/pic/gvt/11.jpg" alt="jpg"></p>
+<ul>
+<li><p>U盘引导进入grub命令行模式，直接输入命令：<code>setup_var 0x2E8 0x3</code> ，意思就是把aperture size的偏移量默认改成0x3，也就是aperture size为512M。</p>
+</li>
+<li><p>建议只改512M，经验告诉我们改1G，可能会出问题。</p>
+</li>
+</ul>
+<p><img src= "/img/loading.avif" data-lazy-src="https://raw.githubusercontent.com/xiangfeidexiaohuo/ProxmoxVE-7.0-DIY/master/pic/gvt/12.jpg" alt="jpg"></p>
+<h4 id="5-改完成功后，开机PVE，就会看到”显卡”多了很多。"><a href="#5-改完成功后，开机PVE，就会看到”显卡”多了很多。" class="headerlink" title="5.改完成功后，开机PVE，就会看到”显卡”多了很多。"></a>5.改完成功后，开机PVE，就会看到”显卡”多了很多。</h4><p>通过命令 <code>lspci -vs 00:02.0</code> 查看，已经变成512M。</p>
+<p><img src= "/img/loading.avif" data-lazy-src="https://raw.githubusercontent.com/xiangfeidexiaohuo/ProxmoxVE-7.0-DIY/master/pic/gvt/16.jpg" alt="jpg"></p>
+<p><img src= "/img/loading.avif" data-lazy-src="https://raw.githubusercontent.com/xiangfeidexiaohuo/ProxmoxVE-7.0-DIY/master/pic/gvt/13.jpg" alt="jpg"></p>
+</details>
+
+
+<hr>
+<h3 id="GVT-G黑群辉核显直通-人脸"><a href="#GVT-G黑群辉核显直通-人脸" class="headerlink" title="GVT-G黑群辉核显直通+人脸"></a>GVT-G黑群辉核显直通+人脸</h3><details>
+<summary>点击展开，查看详细教程！</summary>
+
+<h4 id="1-先把群辉虚拟机关机，然后硬件——显示，设为无；-然后修改虚拟机配置文件；"><a href="#1-先把群辉虚拟机关机，然后硬件——显示，设为无；-然后修改虚拟机配置文件；" class="headerlink" title="1.先把群辉虚拟机关机，然后硬件——显示，设为无； 然后修改虚拟机配置文件；"></a>1.先把群辉虚拟机关机，然后硬件——显示，设为无； 然后修改虚拟机配置文件；</h4><p>&#x2F;etc&#x2F;pve&#x2F;qemu-server&#x2F;102.conf (教程演示群辉虚拟机ID是102，所以是102.conf)</p>
+<p>在配置文件第一行写入以下代码：</p>
+<pre class="line-numbers language-none"><code class="language-none">args: -device vfio-pci,sysfsdev&#x3D;&#x2F;sys&#x2F;bus&#x2F;mdev&#x2F;devices&#x2F;604e42e4-2e90-11ec-8861-037c58d42915,addr&#x3D;02.0,x-igd-opregion&#x3D;on,driver&#x3D;vfio-pci-nohotplug<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+<p><img src= "/img/loading.avif" data-lazy-src="https://raw.githubusercontent.com/xiangfeidexiaohuo/ProxmoxVE-7.0-DIY/master/pic/gvt/14.jpg" alt="jpg"></p>
+<h4 id="2-然后PVE终端，运行命令："><a href="#2-然后PVE终端，运行命令：" class="headerlink" title="2.然后PVE终端，运行命令："></a>2.然后PVE终端，运行命令：</h4><pre class="line-numbers language-none"><code class="language-none">mkdir &#x2F;var&#x2F;lib&#x2F;vz&#x2F;snippets
+
+cp &#x2F;usr&#x2F;share&#x2F;pve-docs&#x2F;examples&#x2F;guest-example-hookscript.pl &#x2F;var&#x2F;lib&#x2F;vz&#x2F;snippets&#x2F;102-autocreate.pl<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span></span></code></pre>
+
+<p>尾部的102和虚拟机ID对应；然后修改&#x2F;var&#x2F;lib&#x2F;vz&#x2F;snippets&#x2F;102-autocreate.pl，在如图位置添加下列2行代码：</p>
+<pre class="line-numbers language-none"><code class="language-none">system(&quot;echo 604e42e4-2e90-11ec-8861-037c58d42915 &gt; &#x2F;sys&#x2F;bus&#x2F;pci&#x2F;devices&#x2F;0000:00:02.0&#x2F;mdev_supported_types&#x2F;i915-GVTg_V5_4&#x2F;create&quot;);
+
+上一行代码中的i915-GVTg_V5_4，取决于你要什么类型的显卡，V5_2&#x2F;8都行。
+
+
+system(&quot;echo 1 &gt; &#x2F;sys&#x2F;bus&#x2F;mdev&#x2F;devices&#x2F;604e42e4-2e90-11ec-8861-037c58d42915&#x2F;remove&quot;);<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p><img src= "/img/loading.avif" data-lazy-src="https://raw.githubusercontent.com/xiangfeidexiaohuo/ProxmoxVE-7.0-DIY/master/pic/gvt/15.jpg" alt="jpg"></p>
+<h4 id="3-最后终端执行：qm-set-102-hookscript-local-snippets-102-autocreate-pl-102和虚拟机ID对应"><a href="#3-最后终端执行：qm-set-102-hookscript-local-snippets-102-autocreate-pl-102和虚拟机ID对应" class="headerlink" title="3.最后终端执行：qm set 102 --hookscript local:snippets/102-autocreate.pl (102和虚拟机ID对应)"></a>3.最后终端执行：<code>qm set 102 --hookscript local:snippets/102-autocreate.pl</code> (102和虚拟机ID对应)</h4><h4 id="4-群辉开机，核显已经直通，且photo人脸ok。"><a href="#4-群辉开机，核显已经直通，且photo人脸ok。" class="headerlink" title="4.群辉开机，核显已经直通，且photo人脸ok。"></a>4.群辉开机，核显已经直通，且photo人脸ok。</h4></details>
+
+
+<hr>
+<h3 id="直通硬盘-全盘映射"><a href="#直通硬盘-全盘映射" class="headerlink" title="直通硬盘(全盘映射)"></a>直通硬盘(全盘映射)</h3><details>
+<summary>点击展开，查看详细教程！</summary>
+
+<h4 id="上面说了核显直通，接着说硬盘直通。前面步骤完成了，现在很简单了。"><a href="#上面说了核显直通，接着说硬盘直通。前面步骤完成了，现在很简单了。" class="headerlink" title="上面说了核显直通，接着说硬盘直通。前面步骤完成了，现在很简单了。"></a>上面说了核显直通，接着说硬盘直通。前面步骤完成了，现在很简单了。</h4><h4 id="1-查看读取存储设备序列号："><a href="#1-查看读取存储设备序列号：" class="headerlink" title="1.查看读取存储设备序列号："></a>1.查看读取存储设备序列号：</h4><pre class="line-numbers language-none"><code class="language-none">ls &#x2F;dev&#x2F;disk&#x2F;by-id<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+<p><img src= "/img/loading.avif" data-lazy-src="https://raw.githubusercontent.com/xiangfeidexiaohuo/ProxmoxVE-7.0-DIY/master/pic/18.jpg" alt="jpg"></p>
+<p>找出自己的硬盘序列号。比如我的就是：</p>
+<p>ata-ST1000XXXXXXXXXXXXXXX</p>
+<h4 id="2-执行命令："><a href="#2-执行命令：" class="headerlink" title="2.执行命令："></a>2.执行命令：</h4><ul>
+<li><p>102：改成自己要直通硬盘的的虚拟机ID。</p>
+</li>
+<li><p>sata1：已有sata0，所以往后排，为sata1，按需修改。</p>
+</li>
+</ul>
+<pre class="line-numbers language-none"><code class="language-none">qm set 102 -sata1 &#x2F;dev&#x2F;disk&#x2F;by-id&#x2F;ata-ST1000XXXXXXXXXXXXXXX<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+<p>返回下面信息就说明成功挂载：</p>
+<p>update VM 102: -sata1 &#x2F;dev&#x2F;disk&#x2F;by-id&#x2F;ata-ST1000XXXXXXXXXXXXXXX</p>
+<h4 id="3-返回PVE查看，已经挂载，重启即可完成。"><a href="#3-返回PVE查看，已经挂载，重启即可完成。" class="headerlink" title="3.返回PVE查看，已经挂载，重启即可完成。"></a>3.返回PVE查看，已经挂载，重启即可完成。</h4><p><img src= "/img/loading.avif" data-lazy-src="https://raw.githubusercontent.com/xiangfeidexiaohuo/ProxmoxVE-7.0-DIY/master/pic/19.jpg" alt="jpg"></p>
+</details>
+
+
+<hr>
+<h3 id="PVE-直接安装Docker"><a href="#PVE-直接安装Docker" class="headerlink" title="PVE 直接安装Docker"></a>PVE 直接安装Docker</h3><details>
+<summary>点击展开，查看详细教程！</summary>
+
+<h4 id="1-登录PVE的SSH，输入以下命令，安装Docker："><a href="#1-登录PVE的SSH，输入以下命令，安装Docker：" class="headerlink" title="1.登录PVE的SSH，输入以下命令，安装Docker："></a>1.登录PVE的SSH，输入以下命令，安装Docker：</h4><pre class="line-numbers language-none"><code class="language-none">curl -sSL https:&#x2F;&#x2F;get.docker.com&#x2F; | sh
+
+chmod 777 &#x2F;var&#x2F;run&#x2F;docker.sock
+
+systemctl start docker
+
+systemctl enable docker.service<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>上面的命令一条一条执行完毕后，docker就安装好了。</p>
+<p><img src= "/img/loading.avif" data-lazy-src="https://raw.githubusercontent.com/xiangfeidexiaohuo/ProxmoxVE-7.0-DIY/master/pic/14.jpg" alt="jpg"></p>
+<h4 id="2-接着终端继续输入命令，安装Portainer-CE汉化版："><a href="#2-接着终端继续输入命令，安装Portainer-CE汉化版：" class="headerlink" title="2.接着终端继续输入命令，安装Portainer-CE汉化版："></a>2.接着终端继续输入命令，安装Portainer-CE汉化版：</h4><pre class="line-numbers language-none"><code class="language-none">docker run -d --restart&#x3D;always --name&#x3D;&quot;portainer&quot; -p 9000:9000 -v &#x2F;var&#x2F;run&#x2F;docker.sock:&#x2F;var&#x2F;run&#x2F;docker.sock -v portainer_data:&#x2F;data 6053537&#x2F;portainer-ce<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+<h4 id="3-等待上述安装命令执行完毕，然后打开PVE的IP地址-9000端口，进入Portainer-CE。"><a href="#3-等待上述安装命令执行完毕，然后打开PVE的IP地址-9000端口，进入Portainer-CE。" class="headerlink" title="3.等待上述安装命令执行完毕，然后打开PVE的IP地址+9000端口，进入Portainer-CE。"></a>3.等待上述安装命令执行完毕，然后打开PVE的IP地址+9000端口，进入Portainer-CE。</h4><p>ps：例如我的pve的ip是192.168.100.1，那么就是进入<a href="http://192.168.100.1:9000。">http://192.168.100.1:9000。</a></p>
+<p><img src= "/img/loading.avif" data-lazy-src="https://raw.githubusercontent.com/xiangfeidexiaohuo/ProxmoxVE-7.0-DIY/master/pic/17.jpg" alt="jpg"></p>
+</details>
+
+
+
+<hr>
+<h3 id="配置PVE的性能-省电模式"><a href="#配置PVE的性能-省电模式" class="headerlink" title="配置PVE的性能&#x2F;省电模式"></a>配置PVE的性能&#x2F;省电模式</h3><ul>
+<li><p>常理来说Linux的系统CPU模式是性能模式，而PVE是基于debian的系统，所以PVE默认的也是性能模式。</p>
+</li>
+<li><p>可能有些小伙伴的PVE主机性能很强，功耗也高，可以通过设置成省电模式，来降低功耗。</p>
+</li>
+<li><p>具体能降低多少，请自测。</p>
+</li>
+</ul>
+<details>
+<summary>点击展开，查看详细教程！</summary>
+
+
+<h4 id="1-当前PVE主机是否支持多种模式切换，终端执行："><a href="#1-当前PVE主机是否支持多种模式切换，终端执行：" class="headerlink" title="1.当前PVE主机是否支持多种模式切换，终端执行："></a>1.当前PVE主机是否支持多种模式切换，终端执行：</h4><pre class="line-numbers language-none"><code class="language-none">cat &#x2F;sys&#x2F;devices&#x2F;system&#x2F;cpu&#x2F;cpu0&#x2F;cpufreq&#x2F;scaling_available_governors<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+<p><img src= "/img/loading.avif" data-lazy-src="https://raw.githubusercontent.com/xiangfeidexiaohuo/ProxmoxVE-7.0-DIY/master/pic/48.jpg" alt="jpg"></p>
+<p>能返回 <code>performance</code> (性能模式) 和 <code>powersave</code> (省电模式)等，就接着往下看，如果只有 <code>performance</code> 就关闭这个教程。</p>
+<ul>
+<li>有些机器CPU比较新，可能还有conservative、schedutil、ondemand等，都可以切换。</li>
+</ul>
+<h4 id="2-安装cpupower，终端执行："><a href="#2-安装cpupower，终端执行：" class="headerlink" title="2.安装cpupower，终端执行："></a>2.安装cpupower，终端执行：</h4><pre class="line-numbers language-none"><code class="language-none">apt-get install linux-cpupower -y<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+<p><img src= "/img/loading.avif" data-lazy-src="https://raw.githubusercontent.com/xiangfeidexiaohuo/ProxmoxVE-7.0-DIY/master/pic/49.jpg" alt="jpg"></p>
+<h4 id="3-切换成省电模式，终端执行："><a href="#3-切换成省电模式，终端执行：" class="headerlink" title="3.切换成省电模式，终端执行："></a>3.切换成省电模式，终端执行：</h4><pre class="line-numbers language-none"><code class="language-none">cpupower -c all frequency-set -g powersave<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+<p><img src= "/img/loading.avif" data-lazy-src="https://raw.githubusercontent.com/xiangfeidexiaohuo/ProxmoxVE-7.0-DIY/master/pic/50.jpg" alt="jpg"></p>
+<p>有多少核，就会返回多少cpu。</p>
+<ul>
+<li>如果想切换到其他模式：conservative、schedutil、ondemand等</li>
+</ul>
+<pre class="line-numbers language-none"><code class="language-none">cpupower -c all frequency-set -g conservative<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+<pre class="line-numbers language-none"><code class="language-none">cpupower -c all frequency-set -g schedutil<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+<pre class="line-numbers language-none"><code class="language-none">cpupower -c all frequency-set -g ondemand<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+
+<ul>
+<li>然后执行： <code>cat /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor</code> ，查看当前CPU处于什么模式。</li>
+</ul>
+<p><img src= "/img/loading.avif" data-lazy-src="https://raw.githubusercontent.com/xiangfeidexiaohuo/ProxmoxVE-7.0-DIY/master/pic/51.jpg" alt="jpg"></p>
+<p>可以看到已经切成<code>powersave</code>省电模式。</p>
+<ul>
+<li>如果要切回性能模式，就执行： <code>cpupower -c all frequency-set -g performance</code> 。</li>
+</ul>
+</details>
+
+
+
+<hr>
+<h3 id="PVE7-x升级第三方内核6-0"><a href="#PVE7-x升级第三方内核6-0" class="headerlink" title="PVE7.x升级第三方内核6.0"></a>PVE7.x升级第三方内核6.0</h3><ul>
+<li><p>PVE7.x目前官方默认内核是5.15，找到个第三方的6.0内核，也可以玩玩。</p>
+</li>
+<li><p>仅适用于PVE 7.x，PVE6.x绕道。</p>
+</li>
+<li><p>仅适用于动手能力强的，小白绕道!</p>
+</li>
+<li><p>升级内核可能有翻车的风险，风险自行承担！</p>
+</li>
+</ul>
+<details>
+<summary>点击展开，查看详细教程！</summary>
+
+<h4 id="0-升级6-0内核之前，请先牢记当前pve的内核版本号，后面回退要用。"><a href="#0-升级6-0内核之前，请先牢记当前pve的内核版本号，后面回退要用。" class="headerlink" title="0.升级6.0内核之前，请先牢记当前pve的内核版本号，后面回退要用。"></a>0.升级6.0内核之前，请先牢记当前pve的内核版本号，后面回退要用。</h4><p><img src= "/img/loading.avif" data-lazy-src="https://raw.githubusercontent.com/xiangfeidexiaohuo/ProxmoxVE-7.0-DIY/master/pic/54.jpg" alt="jpg"></p>
+<p>如图所示，当前内核版本号就为：5.15.64-1-pve</p>
+<h4 id="1-添加存储库的GPG密钥，终端执行："><a href="#1-添加存储库的GPG密钥，终端执行：" class="headerlink" title="1.添加存储库的GPG密钥，终端执行："></a>1.添加存储库的GPG密钥，终端执行：</h4><pre class="line-numbers language-none"><code class="language-none">curl -1sLf &#39;https:&#x2F;&#x2F;dl.cloudsmith.io&#x2F;public&#x2F;pve-edge&#x2F;kernel&#x2F;gpg.8EC01CCF309B98E7.key&#39; | gpg --dearmor -o &#x2F;usr&#x2F;share&#x2F;keyrings&#x2F;pve-edge-kernel.gpg<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+<h4 id="2-设置pve-edge-kernel存储库，终端执行："><a href="#2-设置pve-edge-kernel存储库，终端执行：" class="headerlink" title="2.设置pve-edge-kernel存储库，终端执行："></a>2.设置pve-edge-kernel存储库，终端执行：</h4><pre class="line-numbers language-none"><code class="language-none">echo &quot;deb [signed-by&#x3D;&#x2F;usr&#x2F;share&#x2F;keyrings&#x2F;pve-edge-kernel.gpg] https:&#x2F;&#x2F;dl.cloudsmith.io&#x2F;public&#x2F;pve-edge&#x2F;kernel&#x2F;deb&#x2F;debian bullseye main&quot; &gt; &#x2F;etc&#x2F;apt&#x2F;sources.list.d&#x2F;pve-edge-kernel.list<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+<h4 id="3-安装内核，终端执行："><a href="#3-安装内核，终端执行：" class="headerlink" title="3.安装内核，终端执行："></a>3.安装内核，终端执行：</h4><pre class="line-numbers language-none"><code class="language-none">apt update<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+<pre class="line-numbers language-none"><code class="language-none">apt install pve-kernel-6.0-edge<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+<h4 id="4-重启以后，内核就升级到6-0了。"><a href="#4-重启以后，内核就升级到6-0了。" class="headerlink" title="4.重启以后，内核就升级到6.0了。"></a>4.重启以后，内核就升级到6.0了。</h4><p><img src= "/img/loading.avif" data-lazy-src="https://raw.githubusercontent.com/xiangfeidexiaohuo/ProxmoxVE-7.0-DIY/master/pic/52.jpg" alt="jpg"></p>
+<h4 id="5-查看内核更新没，可去下面的网址看看，若有新版，重复第三步的操作。"><a href="#5-查看内核更新没，可去下面的网址看看，若有新版，重复第三步的操作。" class="headerlink" title="5.查看内核更新没，可去下面的网址看看，若有新版，重复第三步的操作。"></a>5.查看内核更新没，可去下面的网址看看，若有新版，重复第三步的操作。</h4><p><a target="_blank" rel="noopener" href="https://github.com/fabianishere/pve-edge-kernel/releases">查看内核更新</a></p>
+<h4 id="6-已经升级到第三方内核，如果你在wed界面“更新”，看到更新，就不要胡乱更新了。"><a href="#6-已经升级到第三方内核，如果你在wed界面“更新”，看到更新，就不要胡乱更新了。" class="headerlink" title="6.已经升级到第三方内核，如果你在wed界面“更新”，看到更新，就不要胡乱更新了。"></a>6.已经升级到第三方内核，如果你在wed界面“更新”，看到更新，就不要胡乱更新了。</h4><h4 id="7-如果需要回退内核，利用proxmox-boot-tool回退，终端执行："><a href="#7-如果需要回退内核，利用proxmox-boot-tool回退，终端执行：" class="headerlink" title="7.如果需要回退内核，利用proxmox-boot-tool回退，终端执行："></a>7.如果需要回退内核，利用proxmox-boot-tool回退，终端执行：</h4><pre class="line-numbers language-none"><code class="language-none">proxmox-boot-tool kernel pin 升级前的内核版本号
+<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+<p>升级前我的内核版本号是：5.15.64-1-pve，所以命令如下：</p>
+<pre class="line-numbers language-none"><code class="language-none">proxmox-boot-tool kernel pin 5.15.64-1-pve
+<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+<pre class="line-numbers language-none"><code class="language-none">proxmox-boot-tool refresh<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+<h4 id="8-执行完第7步的两条命令后，系统重启，内核就回退了。"><a href="#8-执行完第7步的两条命令后，系统重启，内核就回退了。" class="headerlink" title="8.执行完第7步的两条命令后，系统重启，内核就回退了。"></a>8.执行完第7步的两条命令后，系统重启，内核就回退了。</h4><p><img src= "/img/loading.avif" data-lazy-src="https://raw.githubusercontent.com/xiangfeidexiaohuo/ProxmoxVE-7.0-DIY/master/pic/53.jpg" alt="jpg"></p>
+<p>然后看到内核切回了，然后终端运行：</p>
+<pre class="line-numbers language-none"><code class="language-none">rm -rf &#x2F;etc&#x2F;default&#x2F;grub.d&#x2F;proxmox-kernel-pin.cfg<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+<p>以后就能正常使用“升级”来更新PVE。</p>
+</details>
+
+</article><div class="post-copyright"><div class="post-copyright__author_group"><a class="post-copyright__author_img" href="/about/"><img class="post-copyright__author_img_front" src="/img/pwa/favicon.ico"></a><div class="post-copyright__author_name">耕田日记</div><div class="post-copyright__author_desc">MaxZhang</div></div><div class="post-tools" id="post-tools"><div class="post-tools-left"><div id="quit-box" onclick="RemoveRewardMask()"></div></div></div><div class="post-copyright__notice"><span class="post-copyright-info">本文是原创文章，采用<a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh">CC BY-NC-SA 4.0</a>协议，完整转载请注明来自<a href="/">耕田日记</a></span></div></div><div class="post-tools-right"><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/DIY/"><span class="tags-punctuation"></span>DIY<span class="tagsPageCount">1</span></a><a class="post-meta__tags" href="/tags/PVE/"><span class="tags-punctuation"></span>PVE<span class="tagsPageCount">1</span></a></div></div></div><nav class="needEndHide pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/pages/6289ad/"><div class="pagination-info"><div class="label">上一篇</div><div class="prev_info">NGA相亲圣经</div></div></a></div><div class="next-post pull-right"><a href="/pages/53450d/"><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">编程面试大学</div></div></a></div></nav><div id="post-comment"><div class="comment-head"><div class="comment-headline"><i class="solitude st-chat-fill"></i><span> 评论</span></div></div><div class="comment-wrap"><div id="twikoo-wrap"></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="card-content"><div class="card-info-avatar is-center"><div class="author-info__top-group"><div class="author-info__sayhi" id="author-info__sayhi" onclick="sco.changeSayHelloText()">sayhello.morning</div></div></div><div class="avatar-img-group"><img class="avatar-img" alt="头像" src="/img/avatar.avif"><div class="avatar-sticker"><img class="avatar-sticker-img" src="https://7.isyangs.cn/34/65f2e4e0423cc-34.png" alt="心情贴纸"></div></div><div class="author-info__description_group"><div class="author-info__description">分享自己对编程的<b>热爱</b>，对美好生活的<b>向往</b>，对知识海洋<b>探索历程</b>。</div><div class="author-info__description2">相信你可以在这里找到对你有用的知识和教程。</div></div><div class="author-info__bottom-group"><a class="author-info__bottom-group-left" href="/about/"><div class="author-info__name">MaxZhang</div><div class="author-info__desc">MaxZhang</div></a><div class="card-info-social-icons is-center"></div></div></div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="solitude st-menu-line"></i><span>文章目录</span></div><div class="toc-content" id="toc-content"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Proxmox-VE-7-x-%E7%9B%B8%E5%85%B3%E6%95%99%E7%A8%8B"><span class="toc-text">Proxmox VE 7.x 相关教程</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Proxmox-VE-7-x-%E6%8D%A2%E6%BA%90"><span class="toc-text">Proxmox VE 7.x 换源</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#SSH%E7%99%BB%E5%BD%95%E5%88%B0pve%E5%90%8E%E5%8F%B0%EF%BC%8C%E7%84%B6%E5%90%8E%E4%B8%80%E6%9D%A1%E4%B8%80%E6%9D%A1%E7%9A%84%E6%89%A7%E8%A1%8C%E5%91%BD%E4%BB%A4"><span class="toc-text">SSH登录到pve后台，然后一条一条的执行命令</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#1-%E5%A4%84%E7%90%86%E6%8E%89%E4%BC%81%E4%B8%9A%E6%BA%90"><span class="toc-text">1.处理掉企业源</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-%E5%BC%80%E5%A7%8B%E6%8D%A2%E6%BA%90"><span class="toc-text">2.开始换源</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-%E6%9C%80%E5%90%8E%E6%9B%B4%E6%96%B0"><span class="toc-text">3.最后更新</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Proxmox-VE-7-x-%E5%85%B3%E8%AE%A2%E9%98%85%E6%8F%90%E7%A4%BA"><span class="toc-text">Proxmox VE 7.x 关订阅提示</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1-WinSCP%E7%99%BB%E5%BD%95%E5%88%B0PVE%EF%BC%8C%E7%BC%96%E8%BE%91%E6%89%93%E5%BC%80%E8%BF%99%E4%B8%AA%E6%96%87%E4%BB%B6%EF%BC%9A-usr-share-javascript-proxmox-widget-toolkit-proxmoxlib-js-%E9%98%B2%E6%AD%A2%E6%89%8B%E8%B4%B1%EF%BC%8C%E5%BB%BA%E8%AE%AE%E5%A4%87%E4%BB%BD"><span class="toc-text">1.WinSCP登录到PVE，编辑打开这个文件：&#x2F;usr&#x2F;share&#x2F;javascript&#x2F;proxmox-widget-toolkit&#x2F;proxmoxlib.js (防止手贱，建议备份)</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-%E6%90%9C%E7%B4%A2-data-status-toLowerCase%EF%BC%8C%E6%89%BE%E5%88%B0%E8%BF%99%E4%B8%80%E6%AE%B5%EF%BC%9A"><span class="toc-text">2.搜索 data.status.toLowerCase，找到这一段：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-%E7%9B%B4%E6%8E%A5%E5%88%A0%E6%8E%89%E7%BA%A2%E6%A1%86%E5%86%85%E5%AE%B9%EF%BC%8C%E5%8F%98%E6%88%90%E5%A6%82%E4%B8%8B%E5%9B%BE%EF%BC%8C%E6%9C%80%E5%90%8E%E4%BF%9D%E5%AD%98%E5%8D%B3%E5%8F%AF%E3%80%82"><span class="toc-text">3.直接删掉红框内容，变成如下图，最后保存即可。</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#4-%E6%94%B9%E5%AE%8C%E4%BF%9D%E5%AD%98%EF%BC%8C%E9%87%8D%E8%BF%9BPVE%E7%95%8C%E9%9D%A2%E5%88%B7%E6%96%B0%EF%BC%8C%E5%8E%BB%E6%9B%B4%E6%96%B0%E7%82%B9%E5%87%BB%E5%88%B7%E6%96%B0%EF%BC%8C%E5%B0%B1%E6%B2%A1%E8%AE%A2%E9%98%85%E6%8F%90%E7%A4%BA%E4%BA%86%E3%80%82"><span class="toc-text">4.改完保存，重进PVE界面刷新，去更新点击刷新，就没订阅提示了。</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Proxmox-VE-%E4%B8%BB%E7%95%8C%E9%9D%A2%E6%98%BE%E7%A4%BACPU%E6%B8%A9%E5%BA%A6"><span class="toc-text">Proxmox VE 主界面显示CPU温度</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1-%E7%99%BB%E5%BD%95PVE%E7%9A%84SSH%EF%BC%8C%E6%89%A7%E8%A1%8C%E5%91%BD%E4%BB%A4%E5%AE%89%E8%A3%85sensors%EF%BC%9A"><span class="toc-text">1.登录PVE的SSH，执行命令安装sensors：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-%E6%8E%A2%E6%B5%8B%E4%B8%8B%E6%B8%A9%E5%BA%A6%EF%BC%8C%E6%89%A7%E8%A1%8C%EF%BC%9Asensors-detect-%E4%B8%80%E8%B7%AFyes%EF%BC%8C%E5%9B%9E%E8%BD%A6"><span class="toc-text">2.探测下温度，执行：sensors-detect (一路yes，回车)</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-%E8%8E%B7%E5%8F%96%E6%B8%A9%E5%BA%A6%E4%BF%A1%E6%81%AF%EF%BC%8C%E6%89%A7%E8%A1%8C%EF%BC%9Asensors"><span class="toc-text">3.获取温度信息，执行：sensors</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#4-WinSCP%E7%99%BB%E5%BD%95%E5%88%B0PVE%EF%BC%8C%E4%BF%AE%E6%94%B9%E8%BF%99%E4%B8%AA%E6%96%87%E4%BB%B6%EF%BC%9A-usr-share-perl5-PVE-API2-Nodes-pm"><span class="toc-text">4.WinSCP登录到PVE，修改这个文件：&#x2F;usr&#x2F;share&#x2F;perl5&#x2F;PVE&#x2F;API2&#x2F;Nodes.pm</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#5-%E4%BF%AE%E6%94%B9%E8%BF%99%E4%B8%AA%E6%96%87%E4%BB%B6%EF%BC%9A-usr-share-pve-manager-js-pvemanagerlib-js-%E5%BB%BA%E8%AE%AE%E5%A4%87%E4%BB%BD%EF%BC%8C%E4%B8%87%E4%B8%80%E8%87%AA%E5%B7%B1%E6%94%B9%E7%82%B8%E5%B0%B1%E4%B8%8D%E5%A5%BD%E4%BA%86%E3%80%82"><span class="toc-text">5.修改这个文件：&#x2F;usr&#x2F;share&#x2F;pve-manager&#x2F;js&#x2F;pvemanagerlib.js (建议备份，万一自己改炸就不好了。)</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#6-%E6%94%B9%E5%AE%8C%E6%89%A7%E8%A1%8C-systemctl-restart-pveproxy-%E9%87%8D%E8%BF%9BPVE%E4%B8%BB%E9%A1%B5%EF%BC%8C%E5%B0%B1%E7%9C%8B%E5%88%B0%E6%B8%A9%E5%BA%A6%E6%98%BE%E7%A4%BA%E4%BA%86%E3%80%82"><span class="toc-text">6.改完执行 systemctl restart pveproxy 重进PVE主页，就看到温度显示了。</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Proxmox-VE-%E4%B8%BB%E7%95%8C%E9%9D%A2%E6%98%BE%E7%A4%BA-PCI-E%E7%9B%98%E4%BD%8D-%E7%A1%AC%E7%9B%98%E6%B8%A9%E5%BA%A6"><span class="toc-text">Proxmox VE 主界面显示(PCI-E盘位)硬盘温度</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%89%A9%E5%B1%95%E4%B8%8B%EF%BC%8C%E4%B8%BB%E7%95%8C%E9%9D%A2%E6%B7%BB%E5%8A%A0M-2%E5%9B%BA%E6%80%81%E7%A1%AC%E7%9B%98%E6%B8%A9%E5%BA%A6%EF%BC%9A"><span class="toc-text">* 扩展下，主界面添加M.2固态硬盘温度：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#1-%E5%B7%B2%E7%BB%8F%E5%AE%8C%E6%88%90%E2%80%9CProxmox-VE-%E4%B8%BB%E7%95%8C%E9%9D%A2%E6%98%BE%E7%A4%BACPU%E6%B8%A9%E5%BA%A6%E2%80%9D%EF%BC%8C%E7%84%B6%E5%90%8E%E7%BB%88%E7%AB%AF%E6%89%A7%E8%A1%8C%EF%BC%9Asensors"><span class="toc-text">1.已经完成“Proxmox VE 主界面显示CPU温度”，然后终端执行：sensors</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-%E4%BF%AE%E6%94%B9%E8%BF%99%E4%B8%AA%E6%96%87%E4%BB%B6%EF%BC%9A-usr-share-pve-manager-js-pvemanagerlib-js"><span class="toc-text">2.修改这个文件：&#x2F;usr&#x2F;share&#x2F;pve-manager&#x2F;js&#x2F;pvemanagerlib.js</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-%E6%94%B9%E5%AE%8C%E4%BF%9D%E5%AD%98%E6%89%A7%E8%A1%8Csystemctl-restart-pveproxy%E9%87%8D%E8%BF%9BPVE%E4%B8%BB%E9%A1%B5%E3%80%82"><span class="toc-text">3.改完保存执行systemctl restart pveproxy重进PVE主页。</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Proxmox-VE-%E4%B8%BB%E7%95%8C%E9%9D%A2%E6%98%BE%E7%A4%BACPU%E9%A2%91%E7%8E%87"><span class="toc-text">Proxmox VE 主界面显示CPU频率</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%89%A9%E5%B1%95%E4%B8%8B%EF%BC%8C%E4%B8%BB%E7%95%8C%E9%9D%A2%E6%B7%BB%E5%8A%A0CPU%E9%A2%91%E7%8E%87%EF%BC%9A"><span class="toc-text">* 扩展下，主界面添加CPU频率：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#1-%E4%B9%9F%E6%98%AF%E4%BF%AE%E6%94%B9-usr-share-perl5-PVE-API2-Nodes-pm-%E5%92%8C-usr-share-pve-manager-js-pvemanagerlib-js-%E8%BF%992%E4%B8%AA%E6%96%87%E4%BB%B6"><span class="toc-text">1.也是修改 &#x2F;usr&#x2F;share&#x2F;perl5&#x2F;PVE&#x2F;API2&#x2F;Nodes.pm 和 &#x2F;usr&#x2F;share&#x2F;pve-manager&#x2F;js&#x2F;pvemanagerlib.js 这2个文件</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-%E6%94%B9%E5%AE%8C%E6%89%A7%E8%A1%8C-systemctl-restart-pveproxy-%E9%87%8D%E8%BF%9BPVE%E4%B8%BB%E9%A1%B5%EF%BC%8C%E6%95%88%E6%9E%9C%E5%A6%82%E5%9B%BE%EF%BC%9A"><span class="toc-text">2.改完执行 systemctl restart pveproxy 重进PVE主页，效果如图：</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Proxmox-VE-%E4%B8%BB%E7%95%8C%E9%9D%A2%E6%98%BE%E7%A4%BA-SATA%E7%9B%98%E4%BD%8D-%E7%A1%AC%E7%9B%98%E6%B8%A9%E5%BA%A6"><span class="toc-text">Proxmox VE 主界面显示(SATA盘位)硬盘温度</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%89%A9%E5%B1%95%E4%B8%8B%EF%BC%8C%E4%B8%BB%E7%95%8C%E9%9D%A2%E6%B7%BB%E5%8A%A0%E7%A1%AC%E7%9B%98%E6%B8%A9%E5%BA%A6%EF%BC%9A"><span class="toc-text">* 扩展下，主界面添加硬盘温度：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#1-%E7%99%BB%E5%BD%95PVE%E7%9A%84SSH%EF%BC%8C%E6%89%A7%E8%A1%8C%E5%91%BD%E4%BB%A4%E5%AE%89%E8%A3%85hddtemp%EF%BC%9A"><span class="toc-text">1.登录PVE的SSH，执行命令安装hddtemp：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-%E7%84%B6%E5%90%8E%E4%BF%AE%E6%94%B9-usr-share-perl5-PVE-API2-Nodes-pm-%E5%92%8C-usr-share-pve-manager-js-pvemanagerlib-js-%E8%BF%992%E4%B8%AA%E6%96%87%E4%BB%B6"><span class="toc-text">2.然后修改 &#x2F;usr&#x2F;share&#x2F;perl5&#x2F;PVE&#x2F;API2&#x2F;Nodes.pm 和 &#x2F;usr&#x2F;share&#x2F;pve-manager&#x2F;js&#x2F;pvemanagerlib.js 这2个文件</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-%E6%94%B9%E5%AE%8C%E6%89%A7%E8%A1%8C-systemctl-restart-pveproxy-%E9%87%8D%E8%BF%9BPVE%E4%B8%BB%E9%A1%B5%EF%BC%8C%E6%95%88%E6%9E%9C%E5%A6%82%E5%9B%BE%EF%BC%9A"><span class="toc-text">3.改完执行 systemctl restart pveproxy 重进PVE主页，效果如图：</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Proxmox-VE-%E4%B8%BB%E7%95%8C%E9%9D%A2%E6%98%BE%E7%A4%BA%E6%B8%A9%E5%BA%A6%E7%9A%84%E5%8F%A6%E4%B8%80%E7%A7%8D%E6%96%B9%E6%A1%88-JSON%E6%A0%BC%E5%BC%8F"><span class="toc-text">Proxmox VE 主界面显示温度的另一种方案: JSON格式</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%AF%94%E5%A6%82%E5%A4%9A%E4%B8%AAnvme%E5%9B%BA%E6%80%81%E6%98%BE%E7%A4%BA%E6%B8%A9%E5%BA%A6%EF%BC%8C%E7%9C%8B%E5%A6%82%E4%B8%8B%E5%9B%BE%EF%BC%9A"><span class="toc-text">* 比如多个nvme固态显示温度，看如下图：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#1-%E5%B8%B8%E7%90%86%E8%BF%98%E6%98%AF%E5%BF%85%E9%A1%BB%E5%AE%89%E8%A3%85sensors%EF%BC%9A"><span class="toc-text">1.常理还是必须安装sensors：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-%E7%84%B6%E5%90%8E%E7%BB%88%E7%AB%AF%E6%89%A7%E8%A1%8Csensors-j"><span class="toc-text">2.然后终端执行sensors -j</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-%E4%B9%9F%E6%98%AF%E4%BF%AE%E6%94%B9%EF%BC%9A-usr-share-perl5-PVE-API2-Nodes-pm-%E5%90%8C%E6%A0%B7%E7%9A%84%E4%BD%8D%E7%BD%AE%EF%BC%9A"><span class="toc-text">3.也是修改：&#x2F;usr&#x2F;share&#x2F;perl5&#x2F;PVE&#x2F;API2&#x2F;Nodes.pm 同样的位置：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#4-%E4%B9%9F%E6%98%AF%E4%BF%AE%E6%94%B9%E8%BF%99%E4%B8%AA%E6%96%87%E4%BB%B6%EF%BC%9A-usr-share-pve-manager-js-pvemanagerlib-js-%E5%90%8C%E6%A0%B7%E7%9A%84%E4%BD%8D%E7%BD%AE%EF%BC%9A"><span class="toc-text">4.也是修改这个文件：&#x2F;usr&#x2F;share&#x2F;pve-manager&#x2F;js&#x2F;pvemanagerlib.js 同样的位置：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#5-%E5%A6%82%E6%9E%9C%E7%94%A8%E8%BF%99%E7%A7%8D%E6%96%B9%E6%A1%88%E6%94%B9%E5%86%99%E4%BA%86CPU%E6%B8%A9%E5%BA%A6%EF%BC%8C%E4%B9%8B%E5%89%8D%E7%9A%84%E5%B8%B8%E8%A7%84CPU%E6%96%B9%E6%A1%88%E4%BB%A3%E7%A0%81%E5%8F%AF%E4%BB%A5%E5%8E%BB%E6%8E%89%EF%BC%8C%E8%87%AA%E8%A1%8C%E7%90%86%E8%A7%A3%EF%BC%8C%E8%BF%99%E4%B8%AA%E6%95%99%E7%A8%8B%E6%88%91%E5%86%99%E7%9A%84%E6%AF%94%E8%BE%83%E7%AE%80%E5%8D%95%E3%80%82"><span class="toc-text">5.如果用这种方案改写了CPU温度，之前的常规CPU方案代码可以去掉，自行理解，这个教程我写的比较简单。</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#6-%E6%94%B9%E5%AE%8C%E4%BF%9D%E5%AD%98%E6%89%A7%E8%A1%8Csystemctl-restart-pveproxy%E9%87%8D%E8%BF%9BPVE%E4%B8%BB%E9%A1%B5%E3%80%82"><span class="toc-text">6.改完保存执行systemctl restart pveproxy重进PVE主页。</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Proxmox-VE-%E6%94%B9%E6%98%BE%E7%A4%BA%E8%8C%83%E5%9B%B4"><span class="toc-text">Proxmox VE 改显示范围</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%94%B9%E5%B8%83%E5%B1%80%EF%BC%9A"><span class="toc-text">改布局：</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%A0%B8%E6%98%BE%E7%9B%B4%E9%80%9A-intel"><span class="toc-text">核显直通(intel)</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1-%E7%BC%96%E8%BE%91GRUB%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6%EF%BC%9A-etc-default-grub"><span class="toc-text">1.编辑GRUB配置文件：&#x2F;etc&#x2F;default&#x2F;grub</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-%E6%B7%BB%E5%8A%A0%E6%89%80%E9%9C%80%E7%9A%84%E7%B3%BB%E7%BB%9F%E6%A8%A1%E5%9D%97-%E9%A9%B1%E5%8A%A8-%EF%BC%9A-etc-modules"><span class="toc-text">2.添加所需的系统模块(驱动)：&#x2F;etc&#x2F;modules</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#PVE7-x-%E7%9B%B4%E6%8E%A5%E8%B7%B3%E8%BF%873%E3%80%814%E3%80%815%EF%BC%8C%E7%9B%B4%E6%8E%A5%E5%88%B0%E7%AC%AC6%E6%AD%A5%E5%8D%B3%E5%8F%AF%EF%BC%9BPVE6-x%E5%B0%B1%E4%B8%80%E6%AD%A5%E6%AD%A5%E7%9C%8B%E3%80%82"><span class="toc-text">PVE7.x 直接跳过3、4、5，直接到第6步即可；PVE6.x就一步步看。</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-%E6%B7%BB%E5%8A%A0%E6%A8%A1%E5%9D%97-%E9%A9%B1%E5%8A%A8-%E9%BB%91%E5%90%8D%E5%8D%95%EF%BC%9A-etc-modprobe-d-pve-blacklist-conf"><span class="toc-text">3.添加模块(驱动)黑名单：&#x2F;etc&#x2F;modprobe.d&#x2F;pve-blacklist.conf</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#4-%E6%9F%A5%E7%9C%8BGPU%E7%9A%84ID%EF%BC%9A"><span class="toc-text">4.查看GPU的ID：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#5-%E5%A6%82%E6%9E%9C%E8%A6%81%E9%9F%B3%E9%A2%91%E7%9B%B4%E9%80%9A%EF%BC%8C%E5%B0%B1%E6%90%9C%E7%B4%A2%E9%9F%B3%E9%A2%91%E8%AE%BE%E5%A4%87%E7%9A%84ID"><span class="toc-text">5.如果要音频直通，就搜索音频设备的ID</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#6-%E6%9B%B4%E6%96%B0%E5%86%85%E6%A0%B8%E5%B9%B6%E9%87%8D%E5%90%AF%EF%BC%9A"><span class="toc-text">6.更新内核并重启：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#7-%E9%AA%8C%E8%AF%81%E6%98%AF%E5%90%A6%E5%BC%80%E5%90%AFiommu%EF%BC%9A"><span class="toc-text">7.验证是否开启iommu：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#8-%E6%B7%BB%E5%8A%A0PCI%E8%AE%BE%E5%A4%87%E5%8D%B3%E5%8F%AF%EF%BC%9A-%E6%88%91%E5%8F%AA%E6%B7%BB%E5%8A%A0%E6%A0%B8%E6%98%BE%EF%BC%8C%E9%9F%B3%E9%A2%91%E8%AE%BE%E5%A4%87%E7%9C%8B%E8%AE%BE%E5%A4%87%E7%BC%96%E5%8F%B7%E6%8C%89%E9%9C%80%E6%B7%BB%E5%8A%A0"><span class="toc-text">8.添加PCI设备即可：(我只添加核显，音频设备看设备编号按需添加)</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#9-%E9%AA%8C%E8%AF%81%E6%A0%B8%E6%98%BE%E7%9B%B4%E9%80%9A%E6%88%90%E5%8A%9F%E6%B2%A1%EF%BC%9F"><span class="toc-text">9.验证核显直通成功没？</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%BB%91%E7%BE%A4%E6%99%967-x%E4%BA%BA%E8%84%B8%E8%AF%86%E5%88%AB-DS918"><span class="toc-text">黑群晖7.x人脸识别(DS918+)</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1-%E5%B7%B2%E7%BB%8F%E6%8C%89%E7%85%A7%E4%B8%8A%E9%9D%A2%E7%9A%84%E6%AD%A5%E9%AA%A4%EF%BC%8C%E6%A0%B8%E6%98%BE%E7%9B%B4%E9%80%9A%E9%BB%91%E8%A3%997%EF%BC%9B"><span class="toc-text">1.已经按照上面的步骤，核显直通黑裙7；</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-%E7%BC%96%E8%BE%91%E2%80%9D-etc-pve-qemu-server-102-conf%E2%80%9D%E6%96%87%E4%BB%B6%EF%BC%9A"><span class="toc-text">2.编辑”&#x2F;etc&#x2F;pve&#x2F;qemu-server&#x2F;102.conf”文件：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-%E5%9B%9E%E5%88%B0PVE%E7%AE%A1%E7%90%86%E7%95%8C%E9%9D%A2%EF%BC%8C%E6%9B%B4%E6%94%B9%E9%BB%91%E8%A3%997%E7%9A%84%E7%A1%AC%E4%BB%B6%E2%80%94%E2%80%94%E6%98%BE%E7%A4%BA%E4%B8%BA%E6%97%A0%EF%BC%8C%E7%84%B6%E5%90%8E%E9%87%8D%E5%90%AF%E9%BB%91%E8%A3%997%E3%80%82"><span class="toc-text">3.回到PVE管理界面，更改黑裙7的硬件——显示为无，然后重启黑裙7。</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#4-%E7%84%B6%E5%90%8E%E7%AD%89%E5%BE%85Photos%E7%B4%A2%E5%BC%95%EF%BC%8C%E5%B0%B1%E8%83%BD%E7%9C%8B%E5%88%B0%E4%BA%BA%E8%84%B8%E5%B7%B2%E7%BB%8F%E8%AF%86%E5%88%AB%E4%BA%86%E3%80%82"><span class="toc-text">4.然后等待Photos索引，就能看到人脸已经识别了。</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#GVT-G%E7%9B%B4%E9%80%9A-intel"><span class="toc-text">GVT-G直通(intel)</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1-%E9%A6%96%E5%85%88%E5%9C%A8%E4%B8%BB%E6%9D%BFBIOS%E9%87%8C%E9%9D%A2%E5%90%AF%E7%94%A8GTD%EF%BC%8CGTX%E7%AD%89%E9%80%89%E9%A1%B9%EF%BC%8C%E8%8B%A5%E6%9C%89aperture-size%E9%80%89%E9%A1%B9%EF%BC%8C%E5%BB%BA%E8%AE%AE512M%EF%BC%8C%E6%B2%A1%E6%9C%89%E5%B0%B1%E4%B8%8D%E7%AE%A1%E5%90%A7%EF%BC%9B"><span class="toc-text">1.首先在主板BIOS里面启用GTD，GTX等选项，若有aperture size选项，建议512M，没有就不管吧；</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-%E7%BC%96%E8%BE%91GRUB%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6%EF%BC%9A-etc-default-grub"><span class="toc-text">2.编辑GRUB配置文件：&#x2F;etc&#x2F;default&#x2F;grub</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-%E6%B7%BB%E5%8A%A0%E6%89%80%E9%9C%80%E7%9A%84%E7%B3%BB%E7%BB%9F%E6%A8%A1%E5%9D%97-%E9%A9%B1%E5%8A%A8-%EF%BC%9A-etc-modules"><span class="toc-text">3.添加所需的系统模块(驱动)：&#x2F;etc&#x2F;modules</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#4-%E6%9B%B4%E6%96%B0%E5%86%85%E6%A0%B8%E5%B9%B6%E9%87%8D%E5%90%AF%EF%BC%9A"><span class="toc-text">4.更新内核并重启：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#5-%E9%AA%8C%E8%AF%81%E6%98%AF%E5%90%A6%E5%BC%80%E5%90%AFGVT%EF%BC%9A"><span class="toc-text">5.验证是否开启GVT：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#6-%E9%85%8D%E7%BD%AE%E7%9B%B4%E9%80%9A%EF%BC%9A"><span class="toc-text">6.配置直通：</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#GVT-G%E6%94%B9%E6%98%BE%E5%AD%98%EF%BC%8C%E5%A2%9E%E5%8A%A0%E2%80%9D%E6%98%BE%E5%8D%A1%E2%80%9D"><span class="toc-text">GVT-G改显存，增加”显卡”</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%B8%BA%E4%BA%86%E5%88%86%E9%85%8D%E6%9B%B4%E5%A4%9A%E6%98%BE%E5%8D%A1%EF%BC%8C%E9%9C%80%E7%BB%99%E6%A0%B8%E6%98%BE%E5%88%86%E9%85%8D%E6%9B%B4%E5%A4%9A%E6%98%BE%E5%AD%98%E3%80%82%E4%BD%86%E4%B8%80%E8%88%AC%E4%B8%BB%E6%9D%BF%E7%9A%84BIOS%E5%B9%B6%E6%B2%A1%E6%9C%89%E7%BB%99%E8%B0%83%E8%8A%82%E6%98%BE%E5%AD%98%E7%9A%84%E9%80%89%E9%A1%B9%E2%80%9Daperture-size%E2%80%9D%EF%BC%8C%E5%8F%AA%E7%BB%99%E4%BA%86%E7%B1%BB%E4%BC%BCDVMT-%E5%85%B1%E4%BA%AB%E6%98%BE%E5%AD%98-%E9%80%89%E9%A1%B9%EF%BC%8C%E6%9C%80%E5%A4%A71024MB%EF%BC%8C%E5%BD%93%E6%8A%8ADVMT%E6%94%B9%E6%88%901024MB%E5%90%8E%EF%BC%8C%E5%B9%B6%E6%B2%A1%E6%9C%89%E7%94%A8%E3%80%82%E6%89%80%E4%BB%A5%E6%9C%AC%E6%95%99%E7%A8%8B%E5%BC%BA%E8%A1%8C%E6%94%B9aperture-size%E3%80%82"><span class="toc-text">为了分配更多显卡，需给核显分配更多显存。但一般主板的BIOS并没有给调节显存的选项”aperture size”，只给了类似DVMT(共享显存)选项，最大1024MB，当把DVMT改成1024MB后，并没有用。所以本教程强行改aperture size。</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#1-%E8%87%AA%E8%A1%8C%E5%8E%BB%E4%B8%BB%E6%9D%BF%E5%AE%98%E7%BD%91%E4%B8%8B%E8%BD%BD%E5%BD%93%E5%89%8D%E4%B8%BB%E6%9D%BF%E7%9A%84BIOS-%E6%B3%A8%E6%84%8F%E7%89%88%E6%9C%AC-%EF%BC%8C%E7%84%B6%E5%90%8E%E4%B8%8B%E8%BD%BD%E6%95%99%E7%A8%8B%E6%8F%90%E4%BE%9B%E7%9A%84%E5%B7%A5%E5%85%B7%E5%8C%85%E3%80%82"><span class="toc-text">1.自行去主板官网下载当前主板的BIOS(注意版本)，然后下载教程提供的工具包。</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-%E4%BD%BF%E7%94%A8%E5%B7%A5%E5%85%B7%E5%8C%85%E9%87%8C%E7%9A%84UEFITool0270%E5%B7%A5%E5%85%B7%EF%BC%8C%E6%89%93%E5%BC%80BIOS%E6%96%87%E4%BB%B6%EF%BC%8C%E6%8F%90%E5%8F%96%E6%A8%A1%E5%9D%97%EF%BC%9B"><span class="toc-text">2.使用工具包里的UEFITool0270工具，打开BIOS文件，提取模块；</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-%E4%BD%BF%E7%94%A8%E5%B7%A5%E5%85%B7%E5%8C%85%E9%87%8C%E7%9A%84IRFExtractor-exe%E6%89%93%E5%BC%80%E5%8F%A6%E5%AD%98%E4%B8%BA%E7%9A%84%E6%96%87%E4%BB%B6%EF%BC%8C%E6%89%BE%E5%81%8F%E7%A7%BB%E9%87%8F%E3%80%82"><span class="toc-text">3.使用工具包里的IRFExtractor.exe打开另存为的文件，找偏移量。</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#4-%E5%87%86%E5%A4%87%E4%B8%80%E4%B8%AAU%E7%9B%98%EF%BC%8C%E6%A0%BC%E5%BC%8F%E5%8C%96%E4%B8%BAFAT32%EF%BC%8C%E7%84%B6%E5%90%8E%E6%8A%8A%E5%B7%A5%E5%85%B7%E5%8C%85%E5%86%85%E7%9A%84EFI%E6%96%87%E4%BB%B6%E5%A4%B9%E6%94%BEU%E7%9B%98%E6%A0%B9%E7%9B%AE%E5%BD%95%EF%BC%8C%E7%84%B6%E5%90%8E%E7%94%B5%E8%84%91%E9%87%8D%E5%90%AF%E8%BF%9BU%E7%9B%98%E5%BC%95%E5%AF%BC%E3%80%82"><span class="toc-text">4.准备一个U盘，格式化为FAT32，然后把工具包内的EFI文件夹放U盘根目录，然后电脑重启进U盘引导。</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#5-%E6%94%B9%E5%AE%8C%E6%88%90%E5%8A%9F%E5%90%8E%EF%BC%8C%E5%BC%80%E6%9C%BAPVE%EF%BC%8C%E5%B0%B1%E4%BC%9A%E7%9C%8B%E5%88%B0%E2%80%9D%E6%98%BE%E5%8D%A1%E2%80%9D%E5%A4%9A%E4%BA%86%E5%BE%88%E5%A4%9A%E3%80%82"><span class="toc-text">5.改完成功后，开机PVE，就会看到”显卡”多了很多。</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#GVT-G%E9%BB%91%E7%BE%A4%E8%BE%89%E6%A0%B8%E6%98%BE%E7%9B%B4%E9%80%9A-%E4%BA%BA%E8%84%B8"><span class="toc-text">GVT-G黑群辉核显直通+人脸</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1-%E5%85%88%E6%8A%8A%E7%BE%A4%E8%BE%89%E8%99%9A%E6%8B%9F%E6%9C%BA%E5%85%B3%E6%9C%BA%EF%BC%8C%E7%84%B6%E5%90%8E%E7%A1%AC%E4%BB%B6%E2%80%94%E2%80%94%E6%98%BE%E7%A4%BA%EF%BC%8C%E8%AE%BE%E4%B8%BA%E6%97%A0%EF%BC%9B-%E7%84%B6%E5%90%8E%E4%BF%AE%E6%94%B9%E8%99%9A%E6%8B%9F%E6%9C%BA%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6%EF%BC%9B"><span class="toc-text">1.先把群辉虚拟机关机，然后硬件——显示，设为无； 然后修改虚拟机配置文件；</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-%E7%84%B6%E5%90%8EPVE%E7%BB%88%E7%AB%AF%EF%BC%8C%E8%BF%90%E8%A1%8C%E5%91%BD%E4%BB%A4%EF%BC%9A"><span class="toc-text">2.然后PVE终端，运行命令：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-%E6%9C%80%E5%90%8E%E7%BB%88%E7%AB%AF%E6%89%A7%E8%A1%8C%EF%BC%9Aqm-set-102-hookscript-local-snippets-102-autocreate-pl-102%E5%92%8C%E8%99%9A%E6%8B%9F%E6%9C%BAID%E5%AF%B9%E5%BA%94"><span class="toc-text">3.最后终端执行：qm set 102 --hookscript local:snippets&#x2F;102-autocreate.pl (102和虚拟机ID对应)</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#4-%E7%BE%A4%E8%BE%89%E5%BC%80%E6%9C%BA%EF%BC%8C%E6%A0%B8%E6%98%BE%E5%B7%B2%E7%BB%8F%E7%9B%B4%E9%80%9A%EF%BC%8C%E4%B8%94photo%E4%BA%BA%E8%84%B8ok%E3%80%82"><span class="toc-text">4.群辉开机，核显已经直通，且photo人脸ok。</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%9B%B4%E9%80%9A%E7%A1%AC%E7%9B%98-%E5%85%A8%E7%9B%98%E6%98%A0%E5%B0%84"><span class="toc-text">直通硬盘(全盘映射)</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%B8%8A%E9%9D%A2%E8%AF%B4%E4%BA%86%E6%A0%B8%E6%98%BE%E7%9B%B4%E9%80%9A%EF%BC%8C%E6%8E%A5%E7%9D%80%E8%AF%B4%E7%A1%AC%E7%9B%98%E7%9B%B4%E9%80%9A%E3%80%82%E5%89%8D%E9%9D%A2%E6%AD%A5%E9%AA%A4%E5%AE%8C%E6%88%90%E4%BA%86%EF%BC%8C%E7%8E%B0%E5%9C%A8%E5%BE%88%E7%AE%80%E5%8D%95%E4%BA%86%E3%80%82"><span class="toc-text">上面说了核显直通，接着说硬盘直通。前面步骤完成了，现在很简单了。</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#1-%E6%9F%A5%E7%9C%8B%E8%AF%BB%E5%8F%96%E5%AD%98%E5%82%A8%E8%AE%BE%E5%A4%87%E5%BA%8F%E5%88%97%E5%8F%B7%EF%BC%9A"><span class="toc-text">1.查看读取存储设备序列号：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-%E6%89%A7%E8%A1%8C%E5%91%BD%E4%BB%A4%EF%BC%9A"><span class="toc-text">2.执行命令：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-%E8%BF%94%E5%9B%9EPVE%E6%9F%A5%E7%9C%8B%EF%BC%8C%E5%B7%B2%E7%BB%8F%E6%8C%82%E8%BD%BD%EF%BC%8C%E9%87%8D%E5%90%AF%E5%8D%B3%E5%8F%AF%E5%AE%8C%E6%88%90%E3%80%82"><span class="toc-text">3.返回PVE查看，已经挂载，重启即可完成。</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#PVE-%E7%9B%B4%E6%8E%A5%E5%AE%89%E8%A3%85Docker"><span class="toc-text">PVE 直接安装Docker</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1-%E7%99%BB%E5%BD%95PVE%E7%9A%84SSH%EF%BC%8C%E8%BE%93%E5%85%A5%E4%BB%A5%E4%B8%8B%E5%91%BD%E4%BB%A4%EF%BC%8C%E5%AE%89%E8%A3%85Docker%EF%BC%9A"><span class="toc-text">1.登录PVE的SSH，输入以下命令，安装Docker：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-%E6%8E%A5%E7%9D%80%E7%BB%88%E7%AB%AF%E7%BB%A7%E7%BB%AD%E8%BE%93%E5%85%A5%E5%91%BD%E4%BB%A4%EF%BC%8C%E5%AE%89%E8%A3%85Portainer-CE%E6%B1%89%E5%8C%96%E7%89%88%EF%BC%9A"><span class="toc-text">2.接着终端继续输入命令，安装Portainer-CE汉化版：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-%E7%AD%89%E5%BE%85%E4%B8%8A%E8%BF%B0%E5%AE%89%E8%A3%85%E5%91%BD%E4%BB%A4%E6%89%A7%E8%A1%8C%E5%AE%8C%E6%AF%95%EF%BC%8C%E7%84%B6%E5%90%8E%E6%89%93%E5%BC%80PVE%E7%9A%84IP%E5%9C%B0%E5%9D%80-9000%E7%AB%AF%E5%8F%A3%EF%BC%8C%E8%BF%9B%E5%85%A5Portainer-CE%E3%80%82"><span class="toc-text">3.等待上述安装命令执行完毕，然后打开PVE的IP地址+9000端口，进入Portainer-CE。</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%85%8D%E7%BD%AEPVE%E7%9A%84%E6%80%A7%E8%83%BD-%E7%9C%81%E7%94%B5%E6%A8%A1%E5%BC%8F"><span class="toc-text">配置PVE的性能&#x2F;省电模式</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1-%E5%BD%93%E5%89%8DPVE%E4%B8%BB%E6%9C%BA%E6%98%AF%E5%90%A6%E6%94%AF%E6%8C%81%E5%A4%9A%E7%A7%8D%E6%A8%A1%E5%BC%8F%E5%88%87%E6%8D%A2%EF%BC%8C%E7%BB%88%E7%AB%AF%E6%89%A7%E8%A1%8C%EF%BC%9A"><span class="toc-text">1.当前PVE主机是否支持多种模式切换，终端执行：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-%E5%AE%89%E8%A3%85cpupower%EF%BC%8C%E7%BB%88%E7%AB%AF%E6%89%A7%E8%A1%8C%EF%BC%9A"><span class="toc-text">2.安装cpupower，终端执行：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-%E5%88%87%E6%8D%A2%E6%88%90%E7%9C%81%E7%94%B5%E6%A8%A1%E5%BC%8F%EF%BC%8C%E7%BB%88%E7%AB%AF%E6%89%A7%E8%A1%8C%EF%BC%9A"><span class="toc-text">3.切换成省电模式，终端执行：</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#PVE7-x%E5%8D%87%E7%BA%A7%E7%AC%AC%E4%B8%89%E6%96%B9%E5%86%85%E6%A0%B86-0"><span class="toc-text">PVE7.x升级第三方内核6.0</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#0-%E5%8D%87%E7%BA%A76-0%E5%86%85%E6%A0%B8%E4%B9%8B%E5%89%8D%EF%BC%8C%E8%AF%B7%E5%85%88%E7%89%A2%E8%AE%B0%E5%BD%93%E5%89%8Dpve%E7%9A%84%E5%86%85%E6%A0%B8%E7%89%88%E6%9C%AC%E5%8F%B7%EF%BC%8C%E5%90%8E%E9%9D%A2%E5%9B%9E%E9%80%80%E8%A6%81%E7%94%A8%E3%80%82"><span class="toc-text">0.升级6.0内核之前，请先牢记当前pve的内核版本号，后面回退要用。</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#1-%E6%B7%BB%E5%8A%A0%E5%AD%98%E5%82%A8%E5%BA%93%E7%9A%84GPG%E5%AF%86%E9%92%A5%EF%BC%8C%E7%BB%88%E7%AB%AF%E6%89%A7%E8%A1%8C%EF%BC%9A"><span class="toc-text">1.添加存储库的GPG密钥，终端执行：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-%E8%AE%BE%E7%BD%AEpve-edge-kernel%E5%AD%98%E5%82%A8%E5%BA%93%EF%BC%8C%E7%BB%88%E7%AB%AF%E6%89%A7%E8%A1%8C%EF%BC%9A"><span class="toc-text">2.设置pve-edge-kernel存储库，终端执行：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-%E5%AE%89%E8%A3%85%E5%86%85%E6%A0%B8%EF%BC%8C%E7%BB%88%E7%AB%AF%E6%89%A7%E8%A1%8C%EF%BC%9A"><span class="toc-text">3.安装内核，终端执行：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#4-%E9%87%8D%E5%90%AF%E4%BB%A5%E5%90%8E%EF%BC%8C%E5%86%85%E6%A0%B8%E5%B0%B1%E5%8D%87%E7%BA%A7%E5%88%B06-0%E4%BA%86%E3%80%82"><span class="toc-text">4.重启以后，内核就升级到6.0了。</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#5-%E6%9F%A5%E7%9C%8B%E5%86%85%E6%A0%B8%E6%9B%B4%E6%96%B0%E6%B2%A1%EF%BC%8C%E5%8F%AF%E5%8E%BB%E4%B8%8B%E9%9D%A2%E7%9A%84%E7%BD%91%E5%9D%80%E7%9C%8B%E7%9C%8B%EF%BC%8C%E8%8B%A5%E6%9C%89%E6%96%B0%E7%89%88%EF%BC%8C%E9%87%8D%E5%A4%8D%E7%AC%AC%E4%B8%89%E6%AD%A5%E7%9A%84%E6%93%8D%E4%BD%9C%E3%80%82"><span class="toc-text">5.查看内核更新没，可去下面的网址看看，若有新版，重复第三步的操作。</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#6-%E5%B7%B2%E7%BB%8F%E5%8D%87%E7%BA%A7%E5%88%B0%E7%AC%AC%E4%B8%89%E6%96%B9%E5%86%85%E6%A0%B8%EF%BC%8C%E5%A6%82%E6%9E%9C%E4%BD%A0%E5%9C%A8wed%E7%95%8C%E9%9D%A2%E2%80%9C%E6%9B%B4%E6%96%B0%E2%80%9D%EF%BC%8C%E7%9C%8B%E5%88%B0%E6%9B%B4%E6%96%B0%EF%BC%8C%E5%B0%B1%E4%B8%8D%E8%A6%81%E8%83%A1%E4%B9%B1%E6%9B%B4%E6%96%B0%E4%BA%86%E3%80%82"><span class="toc-text">6.已经升级到第三方内核，如果你在wed界面“更新”，看到更新，就不要胡乱更新了。</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#7-%E5%A6%82%E6%9E%9C%E9%9C%80%E8%A6%81%E5%9B%9E%E9%80%80%E5%86%85%E6%A0%B8%EF%BC%8C%E5%88%A9%E7%94%A8proxmox-boot-tool%E5%9B%9E%E9%80%80%EF%BC%8C%E7%BB%88%E7%AB%AF%E6%89%A7%E8%A1%8C%EF%BC%9A"><span class="toc-text">7.如果需要回退内核，利用proxmox-boot-tool回退，终端执行：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#8-%E6%89%A7%E8%A1%8C%E5%AE%8C%E7%AC%AC7%E6%AD%A5%E7%9A%84%E4%B8%A4%E6%9D%A1%E5%91%BD%E4%BB%A4%E5%90%8E%EF%BC%8C%E7%B3%BB%E7%BB%9F%E9%87%8D%E5%90%AF%EF%BC%8C%E5%86%85%E6%A0%B8%E5%B0%B1%E5%9B%9E%E9%80%80%E4%BA%86%E3%80%82"><span class="toc-text">8.执行完第7步的两条命令后，系统重启，内核就回退了。</span></a></li></ol></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="solitude st-map-line"></i><span>最近发布</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/pages/3d0a7f/" title="杂文做个记录"><img alt="杂文做个记录" src="/img/default.avif"></a><div class="content"><a class="title" href="/pages/3d0a7f/" title="杂文做个记录">杂文做个记录</a><a class="article-recent_post_categories" href="/pages/3d0a7f/">知识碎片</a></div></div><div class="aside-list-item"><a class="thumbnail" href="/pages/e27f62/" title="浅谈ES全文检索搜索结果优化"><img alt="浅谈ES全文检索搜索结果优化" src="/img/default.avif"></a><div class="content"><a class="title" href="/pages/e27f62/" title="浅谈ES全文检索搜索结果优化">浅谈ES全文检索搜索结果优化</a><a class="article-recent_post_categories" href="/pages/e27f62/">Elasticsearch</a></div></div><div class="aside-list-item"><a class="thumbnail" href="/pages/f0bb79/" title="IK分词器的安装与使用"><img alt="IK分词器的安装与使用" src="/img/default.avif"></a><div class="content"><a class="title" href="/pages/f0bb79/" title="IK分词器的安装与使用">IK分词器的安装与使用</a><a class="article-recent_post_categories" href="/pages/f0bb79/">Elasticsearch</a></div></div><div class="aside-list-item"><a class="thumbnail" href="/pages/f67182/" title="Prompt Library – 沃顿商学院给教师和学生的 AI 提示词库"><img alt="Prompt Library – 沃顿商学院给教师和学生的 AI 提示词库" src="/img/default.avif"></a><div class="content"><a class="title" href="/pages/f67182/" title="Prompt Library – 沃顿商学院给教师和学生的 AI 提示词库">Prompt Library – 沃顿商学院给教师和学生的 AI 提示词库</a><a class="article-recent_post_categories" href="/pages/f67182/">知识碎片</a></div></div><div class="aside-list-item"><a class="thumbnail" href="/pages/4d5cf7/" title="幻兽帕鲁服务器配置说明及问题"><img alt="幻兽帕鲁服务器配置说明及问题" src="/img/default.avif"></a><div class="content"><a class="title" href="/pages/4d5cf7/" title="幻兽帕鲁服务器配置说明及问题">幻兽帕鲁服务器配置说明及问题</a><a class="article-recent_post_categories" href="/pages/4d5cf7/">学习笔记</a></div></div></div></div></div></div></main><footer id="footer"><div id="st-footer-bar"><div class="footer-logo"><span>耕田日记</span></div><div class="footer-bar-description">来自 Efu 的文章</div><a class="footer-bar-link" href="/about/">了解更多</a></div><div id="footer_deal"><div class="nolazyload footer_mini_logo" id="footer_mini_logo" title="返回顶部" onclick="sco.toTop()"><img src= "/img/loading.avif" data-lazy-src="/img/pwa/favicon.ico" alt="返回顶部"></div></div><div id="st-footer"></div><div id="footer-bar"><div class="footer-bar-links"><div class="footer-bar-left"><div class="copyright">© 2023 - 2024 By&nbsp;<a class="footer-bar-link" href="/">MaxZhang</a></div></div><div class="footer-bar-right"><a class="footer-bar-link" target="_blank" rel="noopener" href="https://pan.wandhi.com" alt="网盘资源">网盘资源</a><a class="footer-bar-link cc" href="/null" aria-label="copyright"><i class="solitude st-copyright-line"></i><i class="solitude st-creative-commons-by-line"></i><i class="solitude st-creative-commons-nc-line"></i><i class="solitude st-creative-commons-nd-line"></i></a></div></div></div><div class="comment-barrage needEndHide"></div></footer></div><!-- right_menu--><div id="rightMenu"><div class="rightMenu-group rightMenu-small"><div class="rightMenu-item" id="menu-backward"><i class="solitude st-arrow-left-line"></i></div><div class="rightMenu-item" id="menu-forward"><i class="solitude st-arrow-right-line"></i></div><div class="rightMenu-item" id="menu-refresh"><i class="solitude st-restart-line"></i></div><div class="rightMenu-item" id="menu-top"><i class="solitude st-arrow-up-line"></i></div></div><div class="rightMenu-group rightMenu-line rightMenuPlugin"><div class="rightMenu-item" id="menu-copytext"><i class="solitude st-copy-fill"></i><span>复制选中文本</span></div><div class="rightMenu-item" id="menu-pastetext"><i class="solitude st-clipboard-fill"></i><span>粘贴文本</span></div><div class="rightMenu-item" id="menu-commenttext"><i class="solitude st-chat-new-fill"></i><span>引用到评论</span></div><div class="rightMenu-item" id="menu-newwindow"><i class="solitude st-window-fill"></i><span>新窗口打开</span></div><div class="rightMenu-item" id="menu-copylink"><i class="solitude st-link-line"></i><span>复制链接地址</span></div><div class="rightMenu-item" id="menu-copyimg"><i class="solitude st-copy-fill"></i><span>复制此图片</span></div><div class="rightMenu-item" id="menu-downloadimg"><i class="solitude st-download-cloud-fill"></i><span>下载此图片</span></div></div><div class="rightMenu-group rightMenu-line rightMenuOther"><div class="rightMenu-item" id="menu-randomPost" onclick="toRandomPost()||rm.hideRightMenu()"><i class="solitude st-signal-tower-fill"></i><span>随机文章</span></div></div><div class="rightMenu-group rightMenu-line rightMenuOther"><div class="rightMenu-item" id="menu-darkmode" onclick="sco.switchDarkMode()"><i class="solitude st-moon-clear-fill"></i><span class="menu-darkmode-text">深色模式</span></div><div class="rightMenu-item" id="menu-translate"><i class="solitude st-panben-line"></i><span>轉為繁體</span></div></div></div><div id="rightmenu-mask"></div><!-- inject body--><div><script src="/js/utils.js?v=1.12.3"></script><script src="/js/main.js?v=1.12.3"></script><script src="/js/third_party/waterfall.min.js?v=1.12.3"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/pjax/0.2.8/pjax.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mermaid/10.9.1/mermaid.min.js"></script><script src="/js/third_party/universe.min.js?v=1.12.3"></script><script>dark()
+</script><script src="/js/tw_cn.js?v=1.12.3"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/vanilla-lazyload/19.1.3/lazyload.iife.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/node-snackbar/0.1.16/snackbar.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/fancyapps-ui/5.0.36/fancybox/fancybox.umd.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/Swiper/11.0.5/swiper-bundle.min.js"></script><script src="/js/covercolor/local.js?v=1.12.3"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/pace/1.2.4/pace.min.js"></script><script src="/js/right_menu.js?v=1.12.3"></script><div class="js-pjax"><script>(() => {
+    const getCount = () => {
+        const ele = document.querySelectorAll('.twikoo-count')
+        if (!ele) return
+        twikoo.getCommentsCount({
+            envId: 'https://dainty-pixie-3da263.netlify.app/.netlify/functions/twikoo',
+            region: '',
+            urls: [window.location.pathname],
+            includeReply: false
+        }).then(res => {
+            ele.forEach(item => item.textContent = res[0].count)
+        }).catch(err => {
+            console.error(err)
+        })
+    }
+    const init = () => {
+        twikoo.init(Object.assign({
+            el: '#twikoo-wrap',
+            envId: 'https://dainty-pixie-3da263.netlify.app/.netlify/functions/twikoo',
+            region: '',
+            path: window.location.pathname,
+            onCommentLoaded: () => {
+                GLOBAL_CONFIG.lightbox && utils.lightbox(document.querySelectorAll('#twikoo .tk-content img:not(.tk-owo-emotion)'))
+            }
+        }, null))
+
+        
+        sco.owoBig({
+            body: '.OwO-body',
+            item: '.OwO-items li'
+        })
+
+        true && barrageTwikoo()
+    }
+
+    const loadTwikoo = () => {
+        if (typeof twikoo === 'object') setTimeout(init,0)
+        else utils.getScript('https://cdnjs.cloudflare.com/ajax/libs/twikoo/1.6.36/twikoo.all.min.js').then(init)
+    }
+
+    if ('Twikoo' === 'Twikoo' || false) {
+        if (false) utils.loadComment(document.getElementById('twikoo-wrap'), loadTwikoo)
+        else loadTwikoo()
+    } else {
+        window.loadTwoComment = loadTwikoo
+    }
+})()
+</script><script>async function barrageTwikoo() {
+    await fetch("https://dainty-pixie-3da263.netlify.app/.netlify/functions/twikoo", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+            event: "COMMENT_GET",
+            accessToken: "",
+            url: window.location.pathname
+        })
+    }).then(async res => {
+        if (!res.ok) throw new Error("HTTP error! status: " + res.status)
+        const data = await res.json();
+        const init = () => {
+            initializeCommentBarrage((data.data).map(item => Object.assign({
+                content: item.comment,
+                nick: item.nick,
+                mailMd5: item.mailMd5,
+                id: item.id
+            })))
+        }
+        if (typeof initializeCommentBarrage === "undefined") await utils.getScript('/js/third_party/barrage.min.js?v=1.12.3').then(init)
+        else init()
+    }).catch(error => console.error("An error occurred while fetching comments: ", error))
+}</script><script>mermaid.run();</script><script defer pjax src="https://cdnjs.cloudflare.com/ajax/libs/busuanzi/2.3.0/bsz.pure.mini.min.js"></script></div></div><!-- pjax--><script>const pjax = new Pjax({
+    elements: 'a:not([target="_blank"])',
+    selectors: ['title','#body-wrap','#site-config','meta[name="description"]','.js-pjax','meta[property^="og:"]','#config-diff'],
+    cacheBust: false,
+    analytics: true,
+    scrollRestoration: false
+})
+
+document.querySelectorAll('script[data-pjax]').forEach(item => {
+    const newScript = document.createElement('script')
+    const content = item.text || item.textContent || item.innerHTML || ""
+    Array.from(item.attributes).forEach(attr => newScript.setAttribute(attr.name, attr.value))
+    newScript.appendChild(document.createTextNode(content))
+    item.parentNode.replaceChild(newScript, item)
+})
+
+document.addEventListener('pjax:complete', () => {
+    window.refreshFn()
+
+    document.querySelectorAll('script[data-pjax]').forEach(item => {
+        const newScript = document.createElement('script')
+        const content = item.text || item.textContent || item.innerHTML || ""
+        Array.from(item.attributes).forEach(attr => newScript.setAttribute(attr.name, attr.value))
+        newScript.appendChild(document.createTextNode(content))
+        item.parentNode.replaceChild(newScript, item)
+    })
+
+    GLOBAL_CONFIG.islazyload && window.lazyLoadInstance.update()
+
+})
+
+document.addEventListener('pjax:error', (e) => {
+    if (e.request.status === 404) {
+        pjax.loadUrl('/404.html')
+    }
+})</script><!-- theme--><script>initTheme = () => {
+    let isDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches
+    const cachedMode = utils.saveToLocal.get('theme');
+    if (cachedMode === undefined) {
+        const nowMode =
+            isDarkMode ? 'dark' : 'light'
+        document.documentElement.setAttribute('data-theme', nowMode);
+    } else {
+        document.documentElement.setAttribute('data-theme', cachedMode);
+    }
+    typeof rm === 'object' && rm.mode(cachedMode === 'dark' && isDarkMode)
+}
+initTheme()</script><!-- google adsense--><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" onerror="document.querySelectorAll('.google-ads-warp').forEach(i =&gt; i.style.display='none')"></script><script>(adsbygoogle = window.adsbygoogle || []).push({
+	google_ad_client: 'ca-pub-9710588913466976',
+	enable_page_level_ads: true,
+});</script><!-- search--><!-- Tianli-Talk--><!-- music--></body></html><script>const posts=["/pages/3d0a7f/","/pages/e27f62/","/pages/f0bb79/","/pages/f67182/","/pages/4d5cf7/","/pages/7ff8a6/","/pages/aeba39/","/pages/d91398/","/pages/6289ad/","/pages/9e2c2c/","/pages/53450d/","/pages/419f55/","/pages/485c4d/","/pages/508011/","/pages/0d4c5e/","/pages/754a84/","/pages/ed1323/","/pages/d43e1e/","/pages/63430e/","/pages/64166f/","/pages/513b94/","/pages/ecc2c6/","/pages/1fd707/","/pages/5cf1c2/","/pages/298b78/","/pages/7172f5/","/pages/bb6b73/","/pages/2c7d52/","/pages/ba5f37/","/pages/b9f9f8/","/pages/7dbda7/","/pages/d44cb5/","/pages/170574/","/pages/fac33b/","/pages/21f10d/","/pages/c9e80a/","/pages/b33e64/","/pages/b87ef5/","/pages/32c261/","/pages/7019ac/","/pages/c50ed5/","/pages/6dbbae/","/pages/6d0e4a/","/pages/ac3ea9/","/pages/28133a/","/pages/a6f149/","/pages/8915d9/","/pages/db37b8/","/pages/0227ac/","/pages/d0e8fd/","/pages/4ddd25/","/pages/3894cc/","/pages/031e3c/","/pages/295498/","/pages/aa30eb/","/pages/104616/","/pages/636251/","/pages/ef12d2/","/pages/496b1a/","/pages/5b530e/","/pages/76cbc5/","/pages/0e6a63/","/pages/51b942/","/pages/a6bb6d/","/pages/baf96d/","/pages/d9f110/","/pages/b6cc86/","/pages/7dc902/","/pages/52c148/","/pages/924236/","/pages/b7c061/","/pages/2ccd6b/","/pages/6ac97e","/pages/13c5e0/","/pages/0446f1/","/pages/f3c6cf/","/pages/90ad20/","/pages/7444ff/"];function toRandomPost(){ pjax.loadUrl('/'+posts[Math.floor(Math.random()*posts.length)]); }</script>
